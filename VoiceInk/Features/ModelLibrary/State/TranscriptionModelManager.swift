@@ -54,6 +54,8 @@ class TranscriptionModelManager: ObservableObject {
                 return transcribeCppModelManager.isModelDownloaded(named: model.name)
             case .nativeApple:
                 if #available(macOS 26, *) { return true } else { return false }
+            case .chatGPT:
+                return ChatGPTCredentialStore.isConnected
             case .custom:
                 return true
             default:

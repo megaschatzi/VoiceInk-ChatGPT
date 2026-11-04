@@ -74,7 +74,7 @@ actor AutoLearnReviewProposalStore {
             in: .userDomainMask
         )[0]
         let proposalsURL = fileURL ?? applicationSupport
-            .appendingPathComponent("com.prakashjoshipax.VoiceInk", isDirectory: true)
+            .appendingPathComponent(AppIdentity.applicationSupportDirectoryName, isDirectory: true)
             .appendingPathComponent("auto-learn-suggestions.json")
         self.fileURL = proposalsURL
         let dismissedURL = dismissedPairsFileURL ?? proposalsURL.deletingLastPathComponent()

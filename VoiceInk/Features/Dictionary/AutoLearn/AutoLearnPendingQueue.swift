@@ -114,7 +114,7 @@ actor AutoLearnPendingQueue {
             in: .userDomainMask
         )[0]
         let resolvedQueueURL = fileURL ?? applicationSupport
-            .appendingPathComponent("com.prakashjoshipax.VoiceInk", isDirectory: true)
+            .appendingPathComponent(AppIdentity.applicationSupportDirectoryName, isDirectory: true)
             .appendingPathComponent("auto-learn-pending-corrections.json")
         queueFileURL = resolvedQueueURL
         self.archiveFileURL = archiveFileURL ?? resolvedQueueURL.deletingLastPathComponent()

@@ -145,7 +145,9 @@ struct APIKeyManagementView: View {
                     }
                 }
 
-                if aiService.selectedProvider == .ollama {
+                if aiService.selectedProvider == .chatGPT {
+                    ChatGPTConnectionView()
+                } else if aiService.selectedProvider == .ollama {
                     if isEditingURL {
                         HStack {
                             TextField("Base URL", text: $ollamaBaseURL)

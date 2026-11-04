@@ -83,6 +83,8 @@ class AIEnhancementService: ObservableObject {
 
         guard configuration.prompt != nil else { return false }
 
+        if provider == .chatGPT { return ChatGPTCredentialStore.isConnected }
+
         if provider == .localCLI || provider == .ollama {
             return true
         }

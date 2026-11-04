@@ -80,7 +80,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		E11473B02CBE0F0A00318EE4 /* VoiceInk Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "VoiceInk Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E11473B02CBE0F0A00318EE4 /* VoiceInk ChatGPT Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "VoiceInk ChatGPT Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E11473C32CBE0F0B00318EE4 /* VoiceInkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoiceInkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E11473CD2CBE0F0B00318EE4 /* VoiceInkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoiceInkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E161D4A02F41ECB90086F83D /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
@@ -208,7 +208,7 @@
 		E11473B12CBE0F0A00318EE4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E11473B02CBE0F0A00318EE4 /* VoiceInk Dev.app */,
+				E11473B02CBE0F0A00318EE4 /* VoiceInk ChatGPT Dev.app */,
 				E11473C32CBE0F0B00318EE4 /* VoiceInkTests.xctest */,
 				E11473CD2CBE0F0B00318EE4 /* VoiceInkUITests.xctest */,
 				E1FA00012FA7000000000001 /* VoiceInkRefineXPC.xpc */,
@@ -268,7 +268,7 @@
 				E1701E74305E77220098872B /* LLMkit */,
 			);
 			productName = VoiceInk;
-			productReference = E11473B02CBE0F0A00318EE4 /* VoiceInk Dev.app */;
+			productReference = E11473B02CBE0F0A00318EE4 /* VoiceInk ChatGPT Dev.app */;
 			productType = "com.apple.product-type.application";
 		};
 		E11473C22CBE0F0B00318EE4 /* VoiceInkTests */ = {
@@ -637,7 +637,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VoiceInk/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "VoiceInk Dev";
+				INFOPLIST_KEY_CFBundleDisplayName = "VoiceInk ChatGPT Dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -646,9 +646,10 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 2.25;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prakashjoshipax.VoiceInk.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.megaschatzi.VoiceInk.ChatGPT.dev;
 				PRODUCT_MODULE_NAME = VoiceInk;
-				PRODUCT_NAME = "VoiceInk Dev";
+				PRODUCT_NAME = "VoiceInk ChatGPT Dev";
+				EXECUTABLE_NAME = VoiceInk;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG ENABLE_NATIVE_SPEECH_ANALYZER $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -673,7 +674,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VoiceInk/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = VoiceInk;
+				INFOPLIST_KEY_CFBundleDisplayName = "VoiceInk ChatGPT";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -682,8 +683,10 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 2.25;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prakashjoshipax.VoiceInk;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.megaschatzi.VoiceInk.ChatGPT;
+				PRODUCT_NAME = "VoiceInk ChatGPT";
+				PRODUCT_MODULE_NAME = VoiceInk;
+				EXECUTABLE_NAME = VoiceInk;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "ENABLE_NATIVE_SPEECH_ANALYZER $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -704,7 +707,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VoiceInk Dev.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VoiceInk Dev";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VoiceInk ChatGPT Dev.app/Contents/MacOS/VoiceInk";
 			};
 			name = Debug;
 		};
@@ -722,7 +725,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VoiceInk.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VoiceInk";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VoiceInk ChatGPT.app/Contents/MacOS/VoiceInk";
 			};
 			name = Release;
 		};

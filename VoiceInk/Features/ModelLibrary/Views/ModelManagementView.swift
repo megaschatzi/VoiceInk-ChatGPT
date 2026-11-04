@@ -109,6 +109,11 @@ struct ModelManagementView: View {
         ) {
             modelPanelContent
         }
+        .onReceive(NotificationCenter.default.publisher(for: .chatGPTSelectDictation)) { _ in
+            guard ChatGPTCredentialStore.isConnected,
+                let model = transcriptionModelManager.allAvailableModels.first(where: { $0.provider == .chatGPT }) else { return }
+            transcriptionModelManager.setDefaultTranscriptionModel(model)
+        }
         .alert(isPresented: $isShowingDeleteAlert) {
             Alert(
                 title: Text(alertTitle),

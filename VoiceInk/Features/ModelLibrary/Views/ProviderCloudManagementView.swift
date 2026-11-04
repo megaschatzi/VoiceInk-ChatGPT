@@ -7,6 +7,7 @@ struct CloudProviderManagementView: View {
 
     private var providerDescriptors: [ProviderDescriptor] {
         let enhancementProviders: [AIProvider] = [
+            .chatGPT,
             .openAI,
             .openRouter,
             .anthropic,
@@ -42,7 +43,7 @@ struct CloudProviderManagementView: View {
         }
 
         let preferredOrder = [
-            "Groq", "Cerebras", "Gemini", "OpenAI", "OpenRouter", "Anthropic", "Mistral",
+            "ChatGPT", "Groq", "Cerebras", "Gemini", "OpenAI", "OpenRouter", "Anthropic", "Mistral",
             "Deepgram", "ElevenLabs", "Soniox", "Speechmatics", "AssemblyAI", "xAI", "Cartesia",
         ]
 
@@ -108,7 +109,7 @@ struct ProviderDescriptor: Identifiable {
 
     var brandAssetName: String? {
         switch providerKey.lowercased() {
-        case "openai":
+        case "openai", "chatgpt":
             return "provider-openai"
         case "openrouter":
             return "provider-openrouter"
@@ -186,7 +187,8 @@ private struct ProviderListRow: View {
     let onSelect: () -> Void
 
     private var isConfigured: Bool {
-        APIKeyManager.shared.hasAPIKey(forProvider: descriptor.providerKey)
+        descriptor.aiProvider == .chatGPT ? ChatGPTCredentialStore.isConnected
+            : APIKeyManager.shared.hasAPIKey(forProvider: descriptor.providerKey)
     }
 
     private var statusText: LocalizedStringKey {

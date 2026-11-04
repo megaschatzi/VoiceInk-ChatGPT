@@ -18,7 +18,8 @@ struct ProviderDetailPanel: View {
     @State private var activeDescriptorID = ""
 
     private var isConfigured: Bool {
-        APIKeyManager.shared.hasAPIKey(forProvider: descriptor.providerKey)
+        descriptor.aiProvider == .chatGPT ? ChatGPTCredentialStore.isConnected
+            : APIKeyManager.shared.hasAPIKey(forProvider: descriptor.providerKey)
     }
 
     private var iconName: String {
@@ -31,7 +32,11 @@ struct ProviderDetailPanel: View {
         QuickPanelScaffold {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
-                    apiKeySection
+                    if descriptor.aiProvider == .chatGPT {
+                        ChatGPTConnectionView()
+                    } else {
+                        apiKeySection
+                    }
 
                     if descriptor.hasTranscription {
                         transcriptionModelsSection

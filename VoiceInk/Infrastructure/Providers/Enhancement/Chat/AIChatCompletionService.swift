@@ -21,6 +21,13 @@ extension AIService {
         let result: String
         var openRouterCompletion: OpenRouterCompletion? = nil
         switch provider {
+        case .chatGPT:
+            let systemMessages = messages.filter { $0.role == "system" }.map(\.content)
+            result = try await ChatGPTClient.shared.enhance(
+                input: messages.filter { $0.role != "system" }.map { ["role": $0.role, "content": $0.content] },
+                instructions: ([systemPrompt ?? ""] + systemMessages).joined(separator: "\n"),
+                model: resolvedModel, timeout: timeout
+            )
         case .gemini:
             result = try await GeminiLLMClient.chatCompletion(
                 apiKey: try chatAPIKey(for: provider, modelName: resolvedModel),

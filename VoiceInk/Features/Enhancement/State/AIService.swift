@@ -8,6 +8,7 @@ enum AIProvider: String, CaseIterable, Sendable {
     case gemini = "Gemini"
     case anthropic = "Anthropic"
     case openAI = "OpenAI"
+    case chatGPT = "ChatGPT"
     case openRouter = "OpenRouter"
     case mistral = "Mistral"
     case elevenLabs = "ElevenLabs"
@@ -30,6 +31,8 @@ enum AIProvider: String, CaseIterable, Sendable {
             return "https://generativelanguage.googleapis.com/v1/interactions"
         case .anthropic:
             return "https://api.anthropic.com/v1/messages"
+        case .chatGPT:
+            return ""
         case .openAI:
             return "https://api.openai.com/v1/chat/completions"
         case .openRouter:
@@ -67,7 +70,7 @@ enum AIProvider: String, CaseIterable, Sendable {
             return "gemini-3.8-flash"
         case .anthropic:
             return "claude-sonnet-5-5"
-        case .openAI:
+        case .openAI, .chatGPT:
             return "gpt-6-luna"
         case .mistral:
             return "mistral-small-latest"
@@ -123,6 +126,8 @@ enum AIProvider: String, CaseIterable, Sendable {
                 "claude-sonnet-5-5",
                 "claude-haiku-5-5",
             ]
+        case .chatGPT:
+            return ["gpt-6-luna", "gpt-6-sol", "gpt-5.6-luna", "gpt-5.6-terra"]
         case .openAI:
             return [
                 "gpt-6-luna",
@@ -170,7 +175,7 @@ enum AIProvider: String, CaseIterable, Sendable {
 
     var requiresAPIKey: Bool {
         switch self {
-        case .voiceInkRefine, .ollama, .localCLI:
+        case .voiceInkRefine, .ollama, .localCLI, .chatGPT:
             return false
         default:
             return true
@@ -188,7 +193,7 @@ enum AIProvider: String, CaseIterable, Sendable {
 
     var supportsCustomModelID: Bool {
         switch self {
-        case .cerebras, .groq, .gemini, .anthropic, .openAI, .mistral:
+        case .cerebras, .groq, .gemini, .anthropic, .openAI, .mistral, .chatGPT:
             return true
         default:
             return false
@@ -227,7 +232,9 @@ class AIService: ObservableObject {
                 }
             } else {
                 self.apiKey = ""
-                if selectedProvider == .localCLI {
+                if selectedProvider == .chatGPT {
+                    self.isAPIKeyValid = ChatGPTCredentialStore.isConnected
+                } else if selectedProvider == .localCLI {
                     self.isAPIKeyValid = localCLIService.isConfigured
                 } else if selectedProvider == .voiceInkRefine {
                     self.isAPIKeyValid = voiceInkRefineService.isAvailableInModes
@@ -269,6 +276,8 @@ class AIService: ObservableObject {
                 return voiceInkRefineService.isAvailableInModes
             } else if provider == .ollama {
                 return ollamaService.isConnected
+            } else if provider == .chatGPT {
+                return ChatGPTCredentialStore.isConnected
             } else if provider == .localCLI {
                 return localCLIService.isConfigured
             } else if provider.requiresAPIKey {
@@ -360,7 +369,9 @@ class AIService: ObservableObject {
                 self.isAPIKeyValid = true
             }
         } else {
-            if selectedProvider == .localCLI {
+            if selectedProvider == .chatGPT {
+                self.isAPIKeyValid = ChatGPTCredentialStore.isConnected
+            } else if selectedProvider == .localCLI {
                 self.isAPIKeyValid = localCLIService.isConfigured
             } else if selectedProvider == .voiceInkRefine {
                 self.isAPIKeyValid = voiceInkRefineService.isAvailableInModes
@@ -433,7 +444,9 @@ class AIService: ObservableObject {
             }
         } else {
             apiKey = ""
-            if selectedProvider == .localCLI {
+            if selectedProvider == .chatGPT {
+                isAPIKeyValid = ChatGPTCredentialStore.isConnected
+            } else if selectedProvider == .localCLI {
                 isAPIKeyValid = localCLIService.isConfigured
             } else if selectedProvider == .voiceInkRefine {
                 isAPIKeyValid = voiceInkRefineService.isAvailableInModes
@@ -762,7 +775,9 @@ class AIService: ObservableObject {
     }
 
     private func refreshLocalCLIConfigurationState() {
-        if selectedProvider == .localCLI {
+        if selectedProvider == .chatGPT {
+            isAPIKeyValid = ChatGPTCredentialStore.isConnected
+        } else if selectedProvider == .localCLI {
             isAPIKeyValid = localCLIService.isConfigured
         }
         objectWillChange.send()

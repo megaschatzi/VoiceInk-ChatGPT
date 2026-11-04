@@ -62,7 +62,7 @@ class CloudTranscriptionService: TranscriptionService {
             guard let cloudProvider = CloudProviderRegistry.provider(for: model.provider) else {
                 throw CloudTranscriptionError.unsupportedProvider
             }
-            let apiKey = try requireAPIKey(forProvider: cloudProvider.providerKey)
+            let apiKey = model.provider == .chatGPT ? "" : try requireAPIKey(forProvider: cloudProvider.providerKey)
             return try await cloudProvider.transcribe(
                 audioData: audioData,
                 fileName: fileName,

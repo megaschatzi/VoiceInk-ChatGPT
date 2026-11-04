@@ -32,6 +32,7 @@ extension CloudProvider {
 
 enum CloudProviderRegistry {
     static let allProviders: [any CloudProvider] = [
+        ChatGPTProvider(),
         GroqProvider(),
         ElevenLabsProvider(),
         DeepgramProvider(),
