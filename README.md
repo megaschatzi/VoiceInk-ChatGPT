@@ -1,3 +1,5 @@
+> **Private experimental VoiceInk ChatGPT build:** Native ChatGPT sign-in, dictation and text enhancement. Installation, settings transfer and limitations: [CHATGPT-BUILD.md](CHATGPT-BUILD.md). The instructions below describe the original upstream project.
+
 <div align="center">
   <img src="VoiceInk/Assets.xcassets/AppIcon.appiconset/256-mac.png" width="180" height="180" />
   <h1>VoiceInk</h1>

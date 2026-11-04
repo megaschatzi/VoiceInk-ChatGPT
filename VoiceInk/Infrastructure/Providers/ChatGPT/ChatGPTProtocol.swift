@@ -2,7 +2,7 @@ import Foundation
 
 enum ChatGPTError: Error, LocalizedError {
     case signedOut, keychainUnavailable, invalidResponse, loginExpired, deviceLoginUnavailable
-    case rejected(Int), incompleteResponse, audioTooLarge
+    case rejected(Int), incompleteResponse, audioTooLarge, unsupportedAudio
 
     var errorDescription: String? {
         switch self {
@@ -12,6 +12,7 @@ enum ChatGPTError: Error, LocalizedError {
         case .loginExpired: return String(localized: "The ChatGPT sign-in expired. Please start sign-in again.")
         case .deviceLoginUnavailable: return String(localized: "Device code sign-in is unavailable. Enable device code authentication in your ChatGPT security settings, then try again.")
         case .audioTooLarge: return String(localized: "This experimental ChatGPT connection accepts recordings smaller than 20 MB. Please use a shorter recording.")
+        case .unsupportedAudio: return String(localized: "Please choose a WAV, M4A, MP3, MP4, WebM, OGG or FLAC audio file.")
         case .incompleteResponse: return String(localized: "ChatGPT did not finish the response. The incomplete text was not used.")
         case .rejected(let status):
             switch status {
@@ -99,7 +100,7 @@ enum ChatGPTProtocol {
         let ext = (fileName as NSString).pathExtension.lowercased()
         let types = ["wav": "audio/wav", "m4a": "audio/mp4", "mp4": "audio/mp4", "mp3": "audio/mpeg",
                      "webm": "audio/webm", "ogg": "audio/ogg", "flac": "audio/flac"]
-        guard let mime = types[ext] else { throw ChatGPTError.invalidResponse }
+        guard let mime = types[ext] else { throw ChatGPTError.unsupportedAudio }
         var data = Data("--\(boundary)\r\nContent-Disposition: form-data; name=\"file\"; filename=\"dictation.\(ext)\"\r\nContent-Type: \(mime)\r\n\r\n".utf8)
         data.append(audio)
         data.append(Data("\r\n".utf8))

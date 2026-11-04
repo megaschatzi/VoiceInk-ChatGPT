@@ -74,6 +74,8 @@ class CloudTranscriptionService: TranscriptionService {
             )
         } catch is CancellationError {
             throw CancellationError()
+        } catch let error as ChatGPTError {
+            throw error
         } catch let error as CloudTranscriptionError {
             throw error
         } catch let error as LLMKitError {

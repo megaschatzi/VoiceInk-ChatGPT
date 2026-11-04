@@ -28,8 +28,19 @@ jobs:
           VoiceInk/Infrastructure/Providers/ChatGPT/ChatGPTProtocol.swift
           VoiceInk/Infrastructure/Providers/ChatGPT/ChatGPTClient.swift
           VoiceInk/Infrastructure/Credentials/KeychainService.swift
+      - uses: actions/cache/restore@v4
+        id: whisper-cache
+        with:
+          path: ~/VoiceInk-Dependencies/whisper.cpp/build-apple
+          key: whisper-macos-${{ runner.arch }}-4da27c41cebadb3cbbcd2563e9c7cbc8d84bdcad
       - name: Prepare Whisper for macOS
+        if: steps.whisper-cache.outputs.cache-hit != 'true'
         run: bash scripts/build-whisper-macos.sh
+      - uses: actions/cache/save@v4
+        if: steps.whisper-cache.outputs.cache-hit != 'true'
+        with:
+          path: ~/VoiceInk-Dependencies/whisper.cpp/build-apple
+          key: whisper-macos-${{ runner.arch }}-4da27c41cebadb3cbbcd2563e9c7cbc8d84bdcad
       - name: Build separate test app
         run: make local LOCAL_CODESIGN_IDENTITY=-
       - name: Verify and package app

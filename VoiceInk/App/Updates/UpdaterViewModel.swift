@@ -27,6 +27,9 @@ final class UpdaterViewModel: NSObject, ObservableObject, SPUUpdaterDelegate {
     override init() {
         super.init()
 
+        // The separate experimental app must never install upstream VoiceInk updates.
+        guard Bundle.main.bundleIdentifier == "com.prakashjoshipax.VoiceInk" else { return }
+
         let updater = updaterController.updater
 
         // The Dashboard-only implementation kept its own preference and forced
@@ -56,6 +59,7 @@ final class UpdaterViewModel: NSObject, ObservableObject, SPUUpdaterDelegate {
     }
 
     func setAutomaticallyChecksForUpdates(_ value: Bool) {
+        guard Bundle.main.bundleIdentifier == "com.prakashjoshipax.VoiceInk" else { return }
         guard automaticallyChecksForUpdates != value else { return }
         updaterController.updater.automaticallyChecksForUpdates = value
     }

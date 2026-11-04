@@ -384,9 +384,9 @@ final class OnboardingFlowController {
             return
         }
 
-        coordinator.isSelectedTranscriptionProviderVerified = APIKeyManager.shared.hasAPIKey(
-            forProvider: provider.providerKey
-        )
+        coordinator.isSelectedTranscriptionProviderVerified = provider.modelProvider == .chatGPT
+            ? ChatGPTCredentialStore.isConnected
+            : APIKeyManager.shared.hasAPIKey(forProvider: provider.providerKey)
     }
 
     func selectOnboardingTranscriptionSetup(_ kind: OnboardingTranscriptionSetupKind) {

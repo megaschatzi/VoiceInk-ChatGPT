@@ -1,6 +1,314 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Please choose a WAV, M4A, MP3, MP4, WebM, OGG or FLAC audio file." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle eine Audiodatei im Format WAV, M4A, MP3, MP4, WebM, OGG oder FLAC."
+          }
+        }
+      }
+    },
+    "Sign in with ChatGPT" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit ChatGPT anmelden"
+          }
+        }
+      }
+    },
+    "Sign out" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abmelden"
+          }
+        }
+      }
+    },
+    "Open ChatGPT sign-in" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT-Anmeldung öffnen"
+          }
+        }
+      }
+    },
+    "Enter this one-time code on the OpenAI sign-in page:" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gib diesen Einmalcode auf der Anmeldeseite von OpenAI ein:"
+          }
+        }
+      }
+    },
+    "Complete sign-in in your browser. This window will update automatically." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließe die Anmeldung im Browser ab. Dieses Fenster aktualisiert sich automatisch."
+          }
+        }
+      }
+    },
+    "Connect ChatGPT for transcription and text enhancement. No API key or installed CLI is required. Audio and text are sent to OpenAI." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbinde ChatGPT für Transkription und Textbearbeitung. Ein API-Schlüssel oder eine installierte CLI ist nicht erforderlich. Audio und Text werden an OpenAI gesendet."
+          }
+        }
+      }
+    },
+    "Experimental connection: account access and usage limits apply. Included transcription allowance and continued availability are not guaranteed." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experimentelle Anbindung: Es gelten die Zugriffsrechte und Nutzungslimits deines Kontos. Ein enthaltenes Transkriptionskontingent und die dauerhafte Verfügbarkeit sind nicht garantiert."
+          }
+        }
+      }
+    },
+    "Test text connection" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Textverbindung testen"
+          }
+        }
+      }
+    },
+    "Test audio file…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audiodatei testen …"
+          }
+        }
+      }
+    },
+    "A test sends the selected audio file or a short text request to OpenAI and uses your account allowance." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Test sendet die ausgewählte Audiodatei oder eine kurze Textanfrage an OpenAI und nutzt das verfügbare Kontingent deines Kontos."
+          }
+        }
+      }
+    },
+    "Use ChatGPT for dictation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT zum Diktieren verwenden"
+          }
+        }
+      }
+    },
+    "Manage ChatGPT usage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT-Nutzung verwalten"
+          }
+        }
+      }
+    },
+    "ChatGPT sign-in saved. Test the text or audio connection to check access." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT-Anmeldung gespeichert. Teste die Text- oder Audioverbindung, um den Zugriff zu prüfen."
+          }
+        }
+      }
+    },
+    "Keep your VoiceInk settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VoiceInk-Einstellungen übernehmen"
+          }
+        }
+      }
+    },
+    "In your original VoiceInk app, export a backup under Settings → Backup. Import that file under Settings → Backup in VoiceInk ChatGPT. You can select modes, prompts, shortcuts, and dictionary entries. Your original app and history remain unchanged. Account connections and macOS permissions need to be set up again." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exportiere in deiner bisherigen VoiceInk-App unter Einstellungen → Backup eine Sicherung. Importiere diese Datei in VoiceInk ChatGPT unter Einstellungen → Backup. Du kannst Modi, Prompts, Tastenkürzel und Wörterbucheinträge auswählen. Deine bisherige App und ihr Verlauf bleiben unverändert. Kontoverbindungen und macOS-Berechtigungen müssen neu eingerichtet werden."
+          }
+        }
+      }
+    },
+    "Sign in to ChatGPT in the model catalog first." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich zuerst im Modellkatalog bei ChatGPT an."
+          }
+        }
+      }
+    },
+    "The ChatGPT connection could not be accessed in Keychain. Please unlock your login keychain and try again." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf die ChatGPT-Anmeldung im Schlüsselbund konnte nicht zugegriffen werden. Entsperre deinen Anmeldeschlüsselbund und versuche es erneut."
+          }
+        }
+      }
+    },
+    "ChatGPT returned an unexpected response. This experimental connection may have changed." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT hat eine unerwartete Antwort geliefert. Diese experimentelle Schnittstelle könnte sich geändert haben."
+          }
+        }
+      }
+    },
+    "The ChatGPT sign-in expired. Please start sign-in again." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die ChatGPT-Anmeldung ist abgelaufen. Starte die Anmeldung erneut."
+          }
+        }
+      }
+    },
+    "Device code sign-in is unavailable. Enable device code authentication in your ChatGPT security settings, then try again." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Anmeldung mit Gerätecode ist nicht verfügbar. Aktiviere sie in den Sicherheitseinstellungen von ChatGPT und versuche es erneut."
+          }
+        }
+      }
+    },
+    "This experimental ChatGPT connection accepts recordings smaller than 20 MB. Please use a shorter recording." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese experimentelle ChatGPT-Anbindung akzeptiert Aufnahmen unter 20 MB. Verwende eine kürzere Aufnahme."
+          }
+        }
+      }
+    },
+    "ChatGPT did not finish the response. The incomplete text was not used." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT hat die Antwort nicht abgeschlossen. Der unvollständige Text wurde nicht verwendet."
+          }
+        }
+      }
+    },
+    "ChatGPT did not accept this connection. Please sign out and sign in again." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT hat diese Anmeldung nicht akzeptiert. Melde dich ab und erneut an."
+          }
+        }
+      }
+    },
+    "ChatGPT denied access. Your account, workspace policy, or service protection may restrict this experimental connection." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT hat den Zugriff verweigert. Dein Konto, Workspace-Richtlinien oder Schutzmaßnahmen des Dienstes können diese experimentelle Anbindung einschränken."
+          }
+        }
+      }
+    },
+    "ChatGPT reported a usage or rate limit. Check your ChatGPT usage and try again later." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT meldet ein Nutzungs- oder Anfragelimit. Prüfe deine ChatGPT-Nutzung und versuche es später erneut."
+          }
+        }
+      }
+    },
+    "ChatGPT request failed (HTTP %lld)." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT-Anfrage fehlgeschlagen (HTTP %lld)."
+          }
+        }
+      }
+    },
+    "Experimental transcription with your ChatGPT connection. Audio is sent to OpenAI. Availability and usage limits depend on your account." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experimentelle Transkription über deine ChatGPT-Anmeldung. Audio wird an OpenAI gesendet. Verfügbarkeit und Nutzungslimits hängen von deinem Konto ab."
+          }
+        }
+      }
+    },
     "" : {
       "localizations" : {
         "de" : {

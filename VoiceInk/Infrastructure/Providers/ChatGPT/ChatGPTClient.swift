@@ -29,6 +29,18 @@ enum ChatGPTCredentialStore {
     }
 }
 
+protocol ChatGPTCredentialStorage: Sendable {
+    func load() throws -> ChatGPTCredentials
+    func save(_ credentials: ChatGPTCredentials) throws
+    func delete() throws
+}
+
+private struct ChatGPTKeychainStorage: ChatGPTCredentialStorage {
+    func load() throws -> ChatGPTCredentials { try ChatGPTCredentialStore.load() }
+    func save(_ credentials: ChatGPTCredentials) throws { try ChatGPTCredentialStore.save(credentials) }
+    func delete() throws { try ChatGPTCredentialStore.delete() }
+}
+
 /// Never forward bearer tokens or uploaded recordings to a redirect destination.
 private final class ChatGPTSessionDelegate: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
     func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
@@ -40,14 +52,16 @@ private final class ChatGPTSessionDelegate: NSObject, URLSessionTaskDelegate, @u
 actor ChatGPTClient {
     static let shared = ChatGPTClient()
     private let session: URLSession
+    private let storage: any ChatGPTCredentialStorage
     private var generation = UUID()
-    private var refreshTask: Task<ChatGPTCredentials, Error>?
+    private var refreshOperation: (id: UUID, task: Task<ChatGPTCredentials, Error>)?
 
-    init() {
+    init(session: URLSession? = nil, storage: (any ChatGPTCredentialStorage)? = nil) {
+        self.storage = storage ?? ChatGPTKeychainStorage()
         let configuration = URLSessionConfiguration.ephemeral
         configuration.httpShouldSetCookies = false
         configuration.timeoutIntervalForResource = 180
-        session = URLSession(configuration: configuration, delegate: ChatGPTSessionDelegate(), delegateQueue: nil)
+        self.session = session ?? URLSession(configuration: configuration, delegate: ChatGPTSessionDelegate(), delegateQueue: nil)
     }
 
     func requestDeviceCode() async throws -> ChatGPTDeviceCode {
@@ -91,7 +105,7 @@ actor ChatGPTClient {
             ])
             try Task.checkCancellation()
             guard attemptGeneration == generation else { throw CancellationError() }
-            try ChatGPTCredentialStore.save(credentials)
+            try storage.save(credentials)
             return
         }
         throw ChatGPTError.loginExpired
@@ -99,9 +113,9 @@ actor ChatGPTClient {
 
     func signOut() throws {
         generation = UUID()
-        refreshTask?.cancel()
-        refreshTask = nil
-        try ChatGPTCredentialStore.delete()
+        refreshOperation?.task.cancel()
+        refreshOperation = nil
+        try storage.delete()
     }
 
     private func exchangeToken(_ fields: [String: String], previous: ChatGPTCredentials? = nil) async throws -> ChatGPTCredentials {
@@ -117,29 +131,35 @@ actor ChatGPTClient {
     }
 
     private func credentials(rejectedToken: String? = nil) async throws -> ChatGPTCredentials {
-        let stored = try ChatGPTCredentialStore.load()
+        let stored = try storage.load()
         // A concurrent request may already have refreshed the rejected token.
         if let rejectedToken, stored.accessToken != rejectedToken { return stored }
         if rejectedToken == nil, stored.expiresAt > Date().addingTimeInterval(60) { return stored }
         let refreshGeneration = generation
-        let task: Task<ChatGPTCredentials, Error>
-        if let existing = refreshTask { task = existing }
+        let operation: (id: UUID, task: Task<ChatGPTCredentials, Error>)
+        if let existing = refreshOperation { operation = existing }
         else {
-            task = Task { try await self.exchangeToken([
+            let task = Task { try await self.exchangeToken([
                 "grant_type": "refresh_token", "client_id": ChatGPTProtocol.clientID,
                 "refresh_token": stored.refreshToken,
             ], previous: stored) }
-            refreshTask = task
+            operation = (UUID(), task)
+            refreshOperation = operation
         }
-        defer { refreshTask = nil }
-        let renewed = try await task.value
+        defer { if refreshOperation?.id == operation.id { refreshOperation = nil } }
+        let renewed = try await operation.task.value
         guard generation == refreshGeneration else { throw CancellationError() }
-        try ChatGPTCredentialStore.save(renewed)
+        // Another waiter can have saved this refresh, or even completed a later
+        // refresh. Never replace a newer rotated refresh token with an older one.
+        let current = try storage.load()
+        if current.accessToken != stored.accessToken { return current }
+        try storage.save(renewed)
         try Task.checkCancellation()
         return renewed
     }
 
     func transcribe(audio: Data, fileName: String, language: String?, timeout: TimeInterval) async throws -> String {
+        let requestGeneration = generation
         let boundary = "VoiceInk" + UUID().uuidString
         let body = try ChatGPTProtocol.multipart(audio: audio, fileName: fileName, language: language, boundary: boundary)
         var credential = try await credentials()
@@ -149,6 +169,7 @@ actor ChatGPTClient {
             request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
             request.httpBody = body
             let (data, response) = try await session.data(for: request)
+            guard requestGeneration == generation else { throw CancellationError() }
             let status = try statusCode(response)
             if status == 401, attempt == 0 {
                 credential = try await credentials(rejectedToken: credential.accessToken)
@@ -164,6 +185,7 @@ actor ChatGPTClient {
     }
 
     func enhance(input: [[String: String]], instructions: String, model: String, timeout: TimeInterval) async throws -> String {
+        let requestGeneration = generation
         let messages: [[String: Any]] = input.map { message in
             let role = message["role"] == "assistant" ? "assistant" : "user"
             return ["role": role, "content": [["type": role == "assistant" ? "output_text" : "input_text",
@@ -181,6 +203,10 @@ actor ChatGPTClient {
             request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
             request.httpBody = body
             let (bytes, response) = try await session.bytes(for: request)
+            guard requestGeneration == generation else {
+                bytes.task.cancel()
+                throw CancellationError()
+            }
             let status = try statusCode(response)
             if status == 401, attempt == 0 {
                 bytes.task.cancel()
@@ -209,6 +235,7 @@ actor ChatGPTClient {
                 }
                 if !eventLines.isEmpty { try accumulator.consume(Data(eventLines.joined(separator: "\n").utf8)) }
                 bytes.task.cancel()
+                guard requestGeneration == generation else { throw CancellationError() }
                 return try accumulator.result()
             } catch {
                 bytes.task.cancel()

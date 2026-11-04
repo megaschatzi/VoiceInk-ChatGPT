@@ -35,7 +35,8 @@ struct OnboardingTranscriptionSetupCard: View {
 
     private var isSelectedProviderConnected: Bool {
         guard let selectedProvider else { return false }
-        return APIKeyManager.shared.hasAPIKey(forProvider: selectedProvider.providerKey)
+        return selectedProvider.modelProvider == .chatGPT ? ChatGPTCredentialStore.isConnected
+            : APIKeyManager.shared.hasAPIKey(forProvider: selectedProvider.providerKey)
     }
 
     private var canVerify: Bool {
@@ -61,6 +62,7 @@ struct OnboardingTranscriptionSetupCard: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .aiProviderKeyChanged)) { _ in
             refreshVerificationState()
+            onVerificationChanged()
         }
         .onChange(of: selectedProviderKey) { _, _ in
             handleProviderChange()
@@ -150,7 +152,9 @@ struct OnboardingTranscriptionSetupCard: View {
         VStack(alignment: .leading, spacing: 14) {
             providerSummary
 
-            if isSelectedProviderConnected {
+            if selectedProvider?.modelProvider == .chatGPT {
+                ChatGPTConnectionView()
+            } else if isSelectedProviderConnected {
                 verifiedProviderSummary
                 if selectedProvider?.modelProvider == .openRouter,
                     selectedProvider?.models.isEmpty == true
