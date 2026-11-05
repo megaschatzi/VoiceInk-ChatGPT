@@ -113,13 +113,63 @@ enum ChatGPTProtocol {
     }
 }
 
+/// Frame SSE from raw UTF-8 bytes. AsyncBytes.lines coalesces consecutive line
+/// endings on Apple platforms, losing the empty lines that delimit SSE events.
+/// It must not be used to decide where one JSON event ends and the next begins.
+struct ChatGPTEventStreamDecoder {
+    private var line: [UInt8] = []
+    private var dataLines: [String] = []
+    private var eventSize = 0
+    private var skipLF = false
+    private var isFirstLine = true
+    private let maximumEventBytes = 8 * 1024 * 1024
+
+    mutating func append(_ byte: UInt8) throws -> Data? {
+        if skipLF {
+            skipLF = false
+            if byte == 10 { return nil }
+        }
+        if byte == 13 || byte == 10 {
+            skipLF = byte == 13
+            return try finishLine()
+        }
+        guard line.count < maximumEventBytes else { throw ChatGPTError.invalidResponse }
+        line.append(byte)
+        return nil
+    }
+
+    private mutating func finishLine() throws -> Data? {
+        defer { line.removeAll(keepingCapacity: true) }
+        if isFirstLine {
+            isFirstLine = false
+            if line.starts(with: [0xEF, 0xBB, 0xBF]) { line.removeFirst(3) }
+        }
+        guard let text = String(bytes: line, encoding: .utf8) else { throw ChatGPTError.invalidResponse }
+        if text.isEmpty {
+            defer { dataLines.removeAll(keepingCapacity: true); eventSize = 0 }
+            guard !dataLines.isEmpty else { return nil }
+            return Data(dataLines.joined(separator: "\n").utf8)
+        }
+        // Ignore comments, event names, IDs and retry hints. JSON's own type
+        // field is authoritative for the Responses accumulator.
+        let fieldEnd = text.firstIndex(of: ":") ?? text.endIndex
+        guard text[..<fieldEnd] == "data" else { return nil }
+        var value = fieldEnd == text.endIndex ? "" : String(text[text.index(after: fieldEnd)...])
+        if value.first == " " { value.removeFirst() }
+        eventSize += value.utf8.count + 1
+        guard eventSize <= maximumEventBytes else { throw ChatGPTError.invalidResponse }
+        dataLines.append(value)
+        return nil
+    }
+}
+
 /// Accept only assistant output, and only after a completed Responses event.
 struct ChatGPTResponseAccumulator {
     private(set) var text = ""
     private(set) var isComplete = false
 
     mutating func consume(_ data: Data) throws {
-        guard let event = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+        guard let event = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
             let type = event["type"] as? String else { throw ChatGPTError.invalidResponse }
         switch type {
         case "response.output_text.delta":

@@ -71,4 +71,50 @@ final class ChatGPTProtocolTests: XCTestCase {
         try accumulator.consume(Data(event.utf8))
         XCTAssertEqual(try accumulator.result(), "Corrected text.")
     }
+
+    func testSSEFramingPreservesEventsWithEveryLineEnding() throws {
+        for separator in ["\n", "\r\n", "\r"] {
+            var decoder = ChatGPTEventStreamDecoder()
+            let stream = "\u{FEFF}: keepalive" + separator + separator
+                + "event: response.output_text.delta" + separator
+                + #"data: {"type":"response.output_text.delta","delta":"Grüße 👋"}"# + separator + separator
+                + "id: 2" + separator + "data: [DONE]" + separator + separator
+            var events: [Data] = []
+            // Individual bytes also split UTF-8 characters and CRLF pairs.
+            for byte in stream.utf8 {
+                if let event = try decoder.append(byte) { events.append(event) }
+            }
+            XCTAssertEqual(events.count, 2)
+            var accumulator = ChatGPTResponseAccumulator()
+            try accumulator.consume(events[0])
+            XCTAssertEqual(accumulator.text, "Grüße 👋")
+            XCTAssertEqual(events[1], Data("[DONE]".utf8))
+        }
+    }
+
+    func testSSEMultilineDataAndComments() throws {
+        var decoder = ChatGPTEventStreamDecoder()
+        let stream = "data: {\"type\":\"response.output_text.delta\",\n: heartbeat\ndata: \"delta\":\"OK\"}\n\n"
+        var events: [Data] = []
+        for byte in stream.utf8 {
+            if let event = try decoder.append(byte) { events.append(event) }
+        }
+        XCTAssertEqual(events.count, 1)
+        var accumulator = ChatGPTResponseAccumulator()
+        try accumulator.consume(events[0])
+        XCTAssertEqual(accumulator.text, "OK")
+    }
+
+    func testUnterminatedSSEEventIsNotDispatched() throws {
+        var decoder = ChatGPTEventStreamDecoder()
+        let stream = #"data: {"type":"response.completed","response":{"status":"completed"}}"# + "\n"
+        for byte in stream.utf8 { XCTAssertNil(try decoder.append(byte)) }
+    }
+
+    func testMalformedEventHasActionableProtocolError() {
+        var accumulator = ChatGPTResponseAccumulator()
+        XCTAssertThrowsError(try accumulator.consume(Data("not JSON".utf8))) { error in
+            guard case ChatGPTError.invalidResponse = error else { return XCTFail("Expected protocol error, got \(error)") }
+        }
+    }
 }

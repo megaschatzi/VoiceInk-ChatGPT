@@ -68,6 +68,40 @@ final class ChatGPTClientTests: XCTestCase {
         XCTAssertEqual(text, "Grüße 👋")
     }
 
+    func testEnhancementDecodesCRLFEventsAndMultilineJSON() async throws {
+        let (client, _) = makeClient()
+        MockChatGPTHTTP.contentType = "text/event-stream; charset=utf-8"
+        let stream = ": heartbeat\r\n\r\nevent: response.completed\r\ndata: {\"type\":\"response.completed\",\r\n"
+            + "data: \"response\":{\"status\":\"completed\",\"output\":[{\"type\":\"message\",\"role\":\"assistant\",\"content\":[{\"type\":\"output_text\",\"text\":\"Korrigierter Text.\"}]}]}}\r\n\r\n"
+        MockChatGPTHTTP.handler = { _ in (200, Data(stream.utf8)) }
+        let text = try await client.enhance(input: [["role": "user", "content": "Test"]],
+                                            instructions: "Correct the text.", model: "gpt-6-luna", timeout: 10)
+        XCTAssertEqual(text, "Korrigierter Text.")
+    }
+
+    func testEnhancementRejectsIncompleteStream() async throws {
+        let (client, _) = makeClient()
+        MockChatGPTHTTP.contentType = "text/event-stream"
+        let stream = #"data: {"type":"response.output_text.delta","delta":"partial"}"# + "\n\n"
+        MockChatGPTHTTP.handler = { _ in (200, Data(stream.utf8)) }
+        do {
+            _ = try await client.enhance(input: [["role": "user", "content": "Test"]],
+                                         instructions: "Correct the text.", model: "gpt-6-luna", timeout: 10)
+            XCTFail("Partial text must not be delivered")
+        } catch ChatGPTError.incompleteResponse {}
+    }
+
+    func testEnhancementRejectsUnexpectedResponseType() async throws {
+        let (client, _) = makeClient()
+        MockChatGPTHTTP.contentType = "text/html"
+        MockChatGPTHTTP.handler = { _ in (200, Data("<html>Service unavailable</html>".utf8)) }
+        do {
+            _ = try await client.enhance(input: [["role": "user", "content": "Test"]],
+                                         instructions: "Correct the text.", model: "gpt-6-luna", timeout: 10)
+            XCTFail("HTML must not be treated as a model response")
+        } catch ChatGPTError.invalidResponse {}
+    }
+
     func testAudioUsesSubscriptionCredentialAtFixedEndpoint() async throws {
         let (client, _) = makeClient()
         MockChatGPTHTTP.handler = { request in

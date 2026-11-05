@@ -217,23 +217,22 @@ actor ChatGPTClient {
                 bytes.task.cancel()
                 throw ChatGPTError.rejected(status)
             }
+            guard let http = response as? HTTPURLResponse,
+                http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("text/event-stream") == true else {
+                bytes.task.cancel()
+                throw ChatGPTError.invalidResponse
+            }
             var accumulator = ChatGPTResponseAccumulator()
-            var eventLines: [String] = []
+            var decoder = ChatGPTEventStreamDecoder()
             do {
-                for try await line in bytes.lines {
+                for try await byte in bytes {
                     try Task.checkCancellation()
-                    if line.isEmpty {
-                        if !eventLines.isEmpty {
-                            try accumulator.consume(Data(eventLines.joined(separator: "\n").utf8))
-                            eventLines.removeAll(keepingCapacity: true)
-                            if accumulator.isComplete { break }
-                        }
-                    } else if line.hasPrefix("data:") {
-                        let value = line.dropFirst(5).trimmingCharacters(in: .whitespaces)
-                        if value != "[DONE]" { eventLines.append(value) }
+                    if let event = try decoder.append(byte) {
+                        if event == Data("[DONE]".utf8) { break }
+                        try accumulator.consume(event)
+                        if accumulator.isComplete { break }
                     }
                 }
-                if !eventLines.isEmpty { try accumulator.consume(Data(eventLines.joined(separator: "\n").utf8)) }
                 bytes.task.cancel()
                 guard requestGeneration == generation else { throw CancellationError() }
                 return try accumulator.result()
