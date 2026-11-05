@@ -117,4 +117,28 @@ final class ChatGPTProtocolTests: XCTestCase {
             guard case ChatGPTError.invalidResponse = error else { return XCTFail("Expected protocol error, got \(error)") }
         }
     }
+
+    func testCodexTerminalEventCanOmitRedundantStatus() throws {
+        for type in ["response.completed", "response.done"] {
+            var accumulator = ChatGPTResponseAccumulator()
+            try accumulator.consume(Data(#"{"type":"response.output_text.delta","delta":"OK"}"#.utf8))
+            let event = try JSONSerialization.data(withJSONObject: ["type": type, "response": ["id": "resp_test"]])
+            try accumulator.consume(event)
+            XCTAssertEqual(try accumulator.result(), "OK")
+        }
+    }
+
+    func testCompletedEventWithExplicitFailureIsNeverAccepted() throws {
+        let responses: [[String: Any]] = [
+            ["status": "failed"], ["status": "incomplete"], ["status": "cancelled"],
+            ["status": "in_progress"], ["error": ["code": "server_error"]],
+        ]
+        for response in responses {
+            var accumulator = ChatGPTResponseAccumulator()
+            try accumulator.consume(Data(#"{"type":"response.output_text.delta","delta":"partial"}"#.utf8))
+            let event = try JSONSerialization.data(withJSONObject: ["type": "response.completed", "response": response])
+            XCTAssertThrowsError(try accumulator.consume(event))
+            XCTAssertThrowsError(try accumulator.result())
+        }
+    }
 }

@@ -102,6 +102,17 @@ final class ChatGPTClientTests: XCTestCase {
         XCTAssertEqual(text, "OK")
     }
 
+    func testHeaderlessCodexCompletionAtEOFWithNoStatus() async throws {
+        let (client, _) = makeClient()
+        MockChatGPTHTTP.contentType = nil
+        let stream = #"data: {"type":"response.output_text.delta","delta":"OK"}"#
+            + "\n\n" + #"data: {"type":"response.completed","response":{"id":"resp_test"}}"#
+        MockChatGPTHTTP.handler = { _ in (200, Data(stream.utf8)) }
+        let text = try await client.enhance(input: [["role": "user", "content": "Test"]],
+                                            instructions: "Correct the text.", model: "gpt-6-luna", timeout: 10)
+        XCTAssertEqual(text, "OK")
+    }
+
     func testMalformedHeaderlessSSEReportsSafeDiagnostic() async throws {
         let (client, _) = makeClient()
         MockChatGPTHTTP.contentType = nil

@@ -141,6 +141,15 @@ struct ChatGPTEventStreamDecoder {
         return nil
     }
 
+    mutating func finish() throws -> Data? {
+        // Codex-compatible servers can end the final SSE frame at EOF instead
+        // of sending another blank line. Completion is still checked separately.
+        if !line.isEmpty { _ = try finishLine() }
+        guard !dataLines.isEmpty else { return nil }
+        defer { dataLines.removeAll(); eventSize = 0 }
+        return Data(dataLines.joined(separator: "\n").utf8)
+    }
+
     private mutating func finishLine() throws -> Data? {
         defer { line.removeAll(keepingCapacity: true) }
         if isFirstLine {
@@ -200,10 +209,17 @@ struct ChatGPTResponseAccumulator {
         switch type {
         case "response.output_text.delta":
             text += event["delta"] as? String ?? ""
-        case "response.completed":
-            guard let response = event["response"] as? [String: Any], response["status"] as? String == "completed" else {
+        case "response.completed", "response.done":
+            // The Codex terminal event is authoritative; its response envelope
+            // can omit status (as in Codex's own response-completion fixtures).
+            // An explicit non-success status or error must still fail closed.
+            guard let response = event["response"] as? [String: Any] else {
                 throw ChatGPTError.incompleteResponse
             }
+            if let status = response["status"], !(status is NSNull), status as? String != "completed" {
+                throw ChatGPTError.incompleteResponse
+            }
+            if let error = response["error"], !(error is NSNull) { throw ChatGPTError.incompleteResponse }
             let messages = (response["output"] as? [[String: Any]] ?? []).filter {
                 $0["type"] as? String == "message" && $0["role"] as? String == "assistant"
             }

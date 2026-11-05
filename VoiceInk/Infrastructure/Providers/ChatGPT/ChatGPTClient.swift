@@ -240,6 +240,12 @@ actor ChatGPTClient {
                         if accumulator.isComplete { break }
                     }
                 }
+                if !accumulator.isComplete, let event = try decoder.finish(), event != Data("[DONE]".utf8) {
+                    diagnostics.events += 1
+                    diagnostics.lastEventType = ((try? JSONSerialization.jsonObject(with: event)) as? [String: Any])?["type"] as? String
+                    stage = "event-json"
+                    try accumulator.consume(event)
+                }
                 bytes.task.cancel()
                 guard requestGeneration == generation else { throw CancellationError() }
                 stage = "missing-completion"
