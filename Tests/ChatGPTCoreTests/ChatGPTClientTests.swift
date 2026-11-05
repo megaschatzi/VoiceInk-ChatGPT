@@ -18,12 +18,14 @@ private final class MemoryCredentials: ChatGPTCredentialStorage, @unchecked Send
 
 private final class MockChatGPTHTTP: URLProtocol {
     static var handler: ((URLRequest) throws -> (Int, Data))?
+    static var contentType = "application/json"
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
     override func startLoading() {
         do {
             let (status, data) = try Self.handler!(request)
-            let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: "HTTP/1.1", headerFields: nil)!
+            let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: "HTTP/1.1",
+                                           headerFields: ["Content-Type": Self.contentType])!
             client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
             client?.urlProtocol(self, didLoad: data)
             client?.urlProtocolDidFinishLoading(self)
@@ -42,7 +44,29 @@ final class ChatGPTClientTests: XCTestCase {
         return (ChatGPTClient(session: URLSession(configuration: configuration), storage: storage), storage)
     }
 
-    override func tearDown() { MockChatGPTHTTP.handler = nil; super.tearDown() }
+    override func tearDown() {
+        MockChatGPTHTTP.handler = nil
+        MockChatGPTHTTP.contentType = "application/json"
+        super.tearDown()
+    }
+
+    func testEnhancementDecodesMultipleSSEEvents() async throws {
+        let (client, _) = makeClient()
+        MockChatGPTHTTP.contentType = "text/event-stream"
+        let events = [
+            #"{"type":"response.created","response":{"status":"in_progress"}}"#,
+            #"{"type":"response.output_text.delta","delta":"Grüße 👋"}"#,
+            #"{"type":"response.completed","response":{"status":"completed","output":[]}}"#,
+        ]
+        let stream = events.map { "data: " + $0 + "\n\n" }.joined() + "data: [DONE]\n\n"
+        MockChatGPTHTTP.handler = { request in
+            XCTAssertEqual(request.url?.absoluteString, "https://chatgpt.com/backend-api/codex/responses")
+            return (200, Data(stream.utf8))
+        }
+        let text = try await client.enhance(input: [["role": "user", "content": "Test"]],
+                                            instructions: "Correct the text.", model: "gpt-6-luna", timeout: 10)
+        XCTAssertEqual(text, "Grüße 👋")
+    }
 
     func testAudioUsesSubscriptionCredentialAtFixedEndpoint() async throws {
         let (client, _) = makeClient()
