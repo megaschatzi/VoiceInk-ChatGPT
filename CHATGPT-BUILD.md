@@ -4,8 +4,8 @@ For an overview of audio transcription, text enhancement and reusable components
 see [Native ChatGPT integration](CHATGPT-INTEGRATION.md).
 
 Use your existing ChatGPT subscription for audio transcription and optional text
-enhancement. The test account uses ChatGPT Plus; other plans and their limits have
-not been validated. No API key or separate API setup is required, but included
+enhancement. The test user reports testing with ChatGPT Plus and Pro ($100/month); access
+and limits remain account-dependent. No API key or separate API setup is required, but included
 audio minutes and billing treatment of this experimental route are not guaranteed.
 
 This development copy adds an experimental direct ChatGPT/Codex OAuth
@@ -16,6 +16,9 @@ OpenAI's public Codex client implementation. This is separate from the general
 Sign in with ChatGPT token-sharing flow, which currently does not support audio.
 
 ## Install a test build
+
+[Download build 226 ZIP](https://github.com/megaschatzi/VoiceInk-ChatGPT/actions/runs/41991271899/artifacts/13397794762) (GitHub sign-in required; artifact retention applies).
+
 
 1. Open this repository's **Actions** tab and the latest successful **VoiceInk
    ChatGPT macOS** run for `feature/chatgpt-native`.

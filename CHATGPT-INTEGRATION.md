@@ -17,16 +17,32 @@ text editing inside VoiceInk.** You sign in with your ChatGPT account instead of
 entering an OpenAI API key. The native app does not require a separate OpenAI API
 setup or an installed Codex CLI.
 
-The test user has **ChatGPT Plus**, and audio transcription has been reported
-working with that account. Other paid tiers, such as **ChatGPT Pro**, may have
-different access and limits; they have not been validated in this project. A
-particular monthly subscription price does not guarantee access to these routes.
+The test user reports successful testing with **ChatGPT Plus** and **ChatGPT Pro
+($100/month)**. Access and limits can differ by account and plan; a particular
+monthly subscription price does not guarantee access to these routes.
 
 This is subscription-account authentication, not an integration configured with
 an API key and standard API pay-per-token billing. However, the internal audio
 route has no confirmed included-minute allowance or billing guarantee for this
 third-party use. Do not interpret this as unlimited transcription, guaranteed
 zero additional charges, or an officially supported benefit of every ChatGPT plan.
+
+## Download the test app
+
+[Download the build 226 ZIP from GitHub Actions](https://github.com/megaschatzi/VoiceInk-ChatGPT/actions/runs/41991271899/artifacts/13397794762)
+
+GitHub sign-in is required for artifact downloads. Unzip the downloaded artifact,
+then unzip `VoiceInk-ChatGPT-macOS.zip` inside it. The app is ad-hoc signed, not
+Apple-notarized. Actions artifacts expire according to repository retention;
+if this link expires, check the latest successful [build workflow](https://github.com/megaschatzi/VoiceInk-ChatGPT/actions/workflows/chatgpt-macos.yml).
+
+## Choose your own enhancement model
+
+In the relevant mode, enable **AI Enhancement**, choose **ChatGPT**, then choose a
+preset or **Custom…** and enter the exact model ID. Examples: `gpt-6-luna`,
+`gpt-6-sol`, or `gpt-6.1-sol`. Availability depends on your account. These IDs
+select the text-editing model; the audio transcription model is chosen separately
+by ChatGPT's dictation backend.
 
 ## What is implemented
 
