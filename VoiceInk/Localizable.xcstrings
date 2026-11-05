@@ -1,6 +1,17 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "ChatGPT text request failed. Diagnostic: %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT-Textanfrage fehlgeschlagen. Diagnose: %@"
+          }
+        }
+      }
+    },
     "Please choose a WAV, M4A, MP3, MP4, WebM, OGG or FLAC audio file." : {
       "extractionState" : "manual",
       "localizations" : {

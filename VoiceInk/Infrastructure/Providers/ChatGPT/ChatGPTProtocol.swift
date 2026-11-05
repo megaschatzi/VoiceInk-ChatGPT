@@ -3,6 +3,7 @@ import Foundation
 enum ChatGPTError: Error, LocalizedError {
     case signedOut, keychainUnavailable, invalidResponse, loginExpired, deviceLoginUnavailable
     case rejected(Int), incompleteResponse, audioTooLarge, unsupportedAudio
+    case textResponse(String)
 
     var errorDescription: String? {
         switch self {
@@ -14,6 +15,8 @@ enum ChatGPTError: Error, LocalizedError {
         case .audioTooLarge: return String(localized: "This experimental ChatGPT connection accepts recordings smaller than 20 MB. Please use a shorter recording.")
         case .unsupportedAudio: return String(localized: "Please choose a WAV, M4A, MP3, MP4, WebM, OGG or FLAC audio file.")
         case .incompleteResponse: return String(localized: "ChatGPT did not finish the response. The incomplete text was not used.")
+        case .textResponse(let details):
+            return String(format: String(localized: "ChatGPT text request failed. Diagnostic: %@"), details)
         case .rejected(let status):
             switch status {
             case 401: return String(localized: "ChatGPT did not accept this connection. Please sign out and sign in again.")
@@ -160,6 +163,29 @@ struct ChatGPTEventStreamDecoder {
         guard eventSize <= maximumEventBytes else { throw ChatGPTError.invalidResponse }
         dataLines.append(value)
         return nil
+    }
+}
+
+/// Safe transport metadata only. Never retain a prompt, response text, token,
+/// account ID or complete server body in a diagnostic message.
+struct ChatGPTTextDiagnostics {
+    let status: Int
+    let contentType: String?
+    let requestID: String?
+    let model: String
+    var events = 0
+    var lastEventType: String?
+
+    private static func label(_ value: String?) -> String {
+        guard let value, !value.isEmpty else { return "none" }
+        let allowed = Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-/;= ")
+        return String(value.filter { allowed.contains($0) }.prefix(100))
+    }
+
+    func summary(stage: String) -> String {
+        "LLM-\(Self.label(stage)); HTTP=\(status); MIME=\(Self.label(contentType)); "
+            + "events=\(events); last=\(Self.label(lastEventType)); "
+            + "model=\(Self.label(model)); request=\(Self.label(requestID))"
     }
 }
 

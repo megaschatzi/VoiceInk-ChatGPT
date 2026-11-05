@@ -18,14 +18,14 @@ private final class MemoryCredentials: ChatGPTCredentialStorage, @unchecked Send
 
 private final class MockChatGPTHTTP: URLProtocol {
     static var handler: ((URLRequest) throws -> (Int, Data))?
-    static var contentType = "application/json"
+    static var contentType: String? = "application/json"
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
     override func startLoading() {
         do {
             let (status, data) = try Self.handler!(request)
             let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: "HTTP/1.1",
-                                           headerFields: ["Content-Type": Self.contentType])!
+                                           headerFields: Self.contentType.map { ["Content-Type": $0] })!
             client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
             client?.urlProtocol(self, didLoad: data)
             client?.urlProtocolDidFinishLoading(self)
@@ -68,6 +68,59 @@ final class ChatGPTClientTests: XCTestCase {
         XCTAssertEqual(text, "Grüße 👋")
     }
 
+    func testEnhancementAcceptsLiveCodexSequenceWithoutContentType() async throws {
+        let (client, _) = makeClient()
+        MockChatGPTHTTP.contentType = nil
+        // Same HTTP 200 / missing Content-Type and event ordering reported by
+        // the user's live diagnostic. No credentials or real output are recorded.
+        let events = [
+            #"{"type":"response.created","response":{"status":"in_progress"}}"#,
+            #"{"type":"response.in_progress"}"#,
+            #"{"type":"response.output_item.added"}"#,
+            #"{"type":"response.content_part.added"}"#,
+            #"{"type":"response.output_text.delta","delta":"OK"}"#,
+            #"{"type":"response.metadata","headers":{}}"#,
+            #"{"type":"response.output_text.done","text":"OK"}"#,
+            #"{"type":"response.content_part.done"}"#,
+            #"{"type":"response.output_item.done"}"#,
+            #"{"type":"response.completed","response":{"status":"completed","output":[{"type":"message","role":"assistant","content":[{"type":"output_text","text":"OK"}]}]}}"#,
+        ]
+        let stream = events.map { "data: " + $0 + "\r\n\r\n" }.joined()
+        MockChatGPTHTTP.handler = { _ in (200, Data(stream.utf8)) }
+        let text = try await client.enhance(input: [["role": "user", "content": "Reply with exactly: OK"]],
+                                            instructions: "Follow the user's instruction.", model: "gpt-6-luna", timeout: 10)
+        XCTAssertEqual(text, "OK")
+    }
+
+    func testEnhancementValidatesSSEBodyDespiteIncorrectMIMELabel() async throws {
+        let (client, _) = makeClient()
+        MockChatGPTHTTP.contentType = "application/octet-stream"
+        let event = #"{"type":"response.completed","response":{"status":"completed","output":[{"type":"message","role":"assistant","content":[{"type":"output_text","text":"OK"}]}]}}"#
+        MockChatGPTHTTP.handler = { _ in (200, Data(("data: " + event + "\n\n").utf8)) }
+        let text = try await client.enhance(input: [["role": "user", "content": "Test"]],
+                                            instructions: "Correct the text.", model: "gpt-6-luna", timeout: 10)
+        XCTAssertEqual(text, "OK")
+    }
+
+    func testMalformedHeaderlessSSEReportsSafeDiagnostic() async throws {
+        let (client, _) = makeClient()
+        MockChatGPTHTTP.contentType = nil
+        MockChatGPTHTTP.handler = { _ in (200, Data("data: PRIVATE_SERVER_BODY\n\n".utf8)) }
+        do {
+            _ = try await client.enhance(input: [["role": "user", "content": "PRIVATE_TRANSCRIPT"]],
+                                         instructions: "Correct the text.", model: "gpt-6-luna", timeout: 10)
+            XCTFail("Malformed events must not become model output")
+        } catch ChatGPTError.textResponse(let details) {
+            XCTAssertTrue(details.contains("LLM-event-json"))
+            XCTAssertTrue(details.contains("HTTP=200"))
+            XCTAssertTrue(details.contains("MIME=none"))
+            XCTAssertTrue(details.contains("events=1"))
+            for secret in ["PRIVATE_SERVER_BODY", "PRIVATE_TRANSCRIPT", "test-token", "test-account"] {
+                XCTAssertFalse(details.contains(secret))
+            }
+        }
+    }
+
     func testEnhancementDecodesCRLFEventsAndMultilineJSON() async throws {
         let (client, _) = makeClient()
         MockChatGPTHTTP.contentType = "text/event-stream; charset=utf-8"
@@ -88,7 +141,9 @@ final class ChatGPTClientTests: XCTestCase {
             _ = try await client.enhance(input: [["role": "user", "content": "Test"]],
                                          instructions: "Correct the text.", model: "gpt-6-luna", timeout: 10)
             XCTFail("Partial text must not be delivered")
-        } catch ChatGPTError.incompleteResponse {}
+        } catch ChatGPTError.textResponse(let details) {
+            XCTAssertTrue(details.contains("LLM-missing-completion"))
+        }
     }
 
     func testEnhancementRejectsUnexpectedResponseType() async throws {
@@ -99,7 +154,11 @@ final class ChatGPTClientTests: XCTestCase {
             _ = try await client.enhance(input: [["role": "user", "content": "Test"]],
                                          instructions: "Correct the text.", model: "gpt-6-luna", timeout: 10)
             XCTFail("HTML must not be treated as a model response")
-        } catch ChatGPTError.invalidResponse {}
+        } catch ChatGPTError.textResponse(let details) {
+            XCTAssertTrue(details.contains("MIME=text/html"))
+            XCTAssertTrue(details.contains("events=0"))
+            XCTAssertFalse(details.contains("Service unavailable"))
+        }
     }
 
     func testAudioUsesSubscriptionCredentialAtFixedEndpoint() async throws {

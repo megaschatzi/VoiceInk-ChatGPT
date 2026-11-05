@@ -217,25 +217,39 @@ actor ChatGPTClient {
                 bytes.task.cancel()
                 throw ChatGPTError.rejected(status)
             }
-            guard let http = response as? HTTPURLResponse,
-                http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("text/event-stream") == true else {
-                bytes.task.cancel()
-                throw ChatGPTError.invalidResponse
-            }
+            let http = response as? HTTPURLResponse
+            var diagnostics = ChatGPTTextDiagnostics(status: status,
+                contentType: http?.value(forHTTPHeaderField: "Content-Type"),
+                requestID: http?.value(forHTTPHeaderField: "x-request-id"), model: model)
+            // The live Codex endpoint can return HTTP 200 and valid SSE without
+            // Content-Type. Like Codex, validate the events and terminal response
+            // themselves; absence of that optional header is not a failure.
             var accumulator = ChatGPTResponseAccumulator()
             var decoder = ChatGPTEventStreamDecoder()
+            var stage = "stream-frame"
             do {
                 for try await byte in bytes {
                     try Task.checkCancellation()
+                    stage = "stream-frame"
                     if let event = try decoder.append(byte) {
                         if event == Data("[DONE]".utf8) { break }
+                        diagnostics.events += 1
+                        diagnostics.lastEventType = ((try? JSONSerialization.jsonObject(with: event)) as? [String: Any])?["type"] as? String
+                        stage = "event-json"
                         try accumulator.consume(event)
                         if accumulator.isComplete { break }
                     }
                 }
                 bytes.task.cancel()
                 guard requestGeneration == generation else { throw CancellationError() }
+                stage = "missing-completion"
                 return try accumulator.result()
+            } catch is CancellationError {
+                bytes.task.cancel()
+                throw CancellationError()
+            } catch is ChatGPTError {
+                bytes.task.cancel()
+                throw ChatGPTError.textResponse(diagnostics.summary(stage: stage))
             } catch {
                 bytes.task.cancel()
                 throw error
