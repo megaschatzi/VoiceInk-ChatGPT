@@ -1,4 +1,4 @@
-# Native ChatGPT sign-in, audio transcription and text enhancement
+# Use your ChatGPT subscription for VoiceInk transcription and text enhancement
 
 This experimental VoiceInk implementation adds **both audio-to-text transcription
 and optional LLM text enhancement using a ChatGPT account**. It does not require
@@ -9,6 +9,24 @@ This is a development copy of [Beingpax/VoiceInk](https://github.com/Beingpax/Vo
 not an official VoiceInk or OpenAI release. The purpose is to make the implementation
 available for review and possible integration upstream. Repository visibility and
 access permissions still apply to every link in this document.
+
+## Uses your existing ChatGPT subscription
+
+**The goal is to use the ChatGPT subscription you already have for dictation and
+text editing inside VoiceInk.** You sign in with your ChatGPT account instead of
+entering an OpenAI API key. The native app does not require a separate OpenAI API
+setup or an installed Codex CLI.
+
+The test user has **ChatGPT Plus**, and audio transcription has been reported
+working with that account. Other paid tiers, such as **ChatGPT Pro**, may have
+different access and limits; they have not been validated in this project. A
+particular monthly subscription price does not guarantee access to these routes.
+
+This is subscription-account authentication, not an integration configured with
+an API key and standard API pay-per-token billing. However, the internal audio
+route has no confirmed included-minute allowance or billing guarantee for this
+third-party use. Do not interpret this as unlimited transcription, guaranteed
+zero additional charges, or an officially supported benefit of every ChatGPT plan.
 
 ## What is implemented
 

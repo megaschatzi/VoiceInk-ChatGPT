@@ -3,6 +3,11 @@
 For an overview of audio transcription, text enhancement and reusable components,
 see [Native ChatGPT integration](CHATGPT-INTEGRATION.md).
 
+Use your existing ChatGPT subscription for audio transcription and optional text
+enhancement. The test account uses ChatGPT Plus; other plans and their limits have
+not been validated. No API key or separate API setup is required, but included
+audio minutes and billing treatment of this experimental route are not guaranteed.
+
 This development copy adds an experimental direct ChatGPT/Codex OAuth
 connection. It needs neither an API key nor an installed Codex CLI. It uses a
 browser device-code sign-in, stores credentials in a separate non-syncing macOS
