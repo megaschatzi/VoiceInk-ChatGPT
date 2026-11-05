@@ -17,13 +17,12 @@ Sign in with ChatGPT token-sharing flow, which currently does not support audio.
 
 ## Install a test build
 
-[Download build 226 ZIP](https://github.com/megaschatzi/VoiceInk-ChatGPT/actions/runs/41991271899/artifacts/13397794762) (GitHub sign-in required; artifact retention applies).
+[Download build 226 ZIP](https://raw.githubusercontent.com/megaschatzi/VoiceInk-ChatGPT/downloads/releases/build226/VoiceInk-ChatGPT-macOS.zip) (no GitHub sign-in required).
 
 
-1. Open this repository's **Actions** tab and the latest successful **VoiceInk
-   ChatGPT macOS** run for `feature/chatgpt-native`.
-2. Download **VoiceInk-ChatGPT-macOS** under Artifacts. Unzip the artifact and then
-   `VoiceInk-ChatGPT-macOS.zip`. Move **VoiceInk ChatGPT.app** into Applications.
+1. Open the [build 226 release page](https://github.com/megaschatzi/VoiceInk-ChatGPT/releases/tag/v2.25-chatgpt-build226)
+   and follow its **Download VoiceInk-ChatGPT-macOS.zip** link. No GitHub account is required.
+2. Unzip the ZIP and move **VoiceInk ChatGPT.app** into Applications.
 3. The build is ad-hoc signed, not Apple-notarized. macOS may require explicit
    approval under System Settings → Privacy & Security. Do not disable Gatekeeper.
 4. Grant microphone and accessibility permissions to the new app. Run one dictation

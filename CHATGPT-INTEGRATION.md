@@ -29,12 +29,12 @@ zero additional charges, or an officially supported benefit of every ChatGPT pla
 
 ## Download the test app
 
-[Download the build 226 ZIP from GitHub Actions](https://github.com/megaschatzi/VoiceInk-ChatGPT/actions/runs/41991271899/artifacts/13397794762)
+[Download the build 226 ZIP](https://raw.githubusercontent.com/megaschatzi/VoiceInk-ChatGPT/downloads/releases/build226/VoiceInk-ChatGPT-macOS.zip)
 
-GitHub sign-in is required for artifact downloads. Unzip the downloaded artifact,
-then unzip `VoiceInk-ChatGPT-macOS.zip` inside it. The app is ad-hoc signed, not
-Apple-notarized. Actions artifacts expire according to repository retention;
-if this link expires, check the latest successful [build workflow](https://github.com/megaschatzi/VoiceInk-ChatGPT/actions/workflows/chatgpt-macos.yml).
+No GitHub sign-in is required. Unzip the ZIP and move **VoiceInk ChatGPT.app**
+to Applications. This build is ad-hoc signed, not Apple-notarized.
+The ZIP is hosted in the repository's `downloads` branch and linked from the
+[release page](https://github.com/megaschatzi/VoiceInk-ChatGPT/releases/tag/v2.25-chatgpt-build226); it is not an expiring Actions artifact.
 
 ## Choose your own enhancement model
 
