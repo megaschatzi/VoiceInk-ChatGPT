@@ -1,5 +1,8 @@
 # VoiceInk ChatGPT test app
 
+For an overview of audio transcription, text enhancement and reusable components,
+see [Native ChatGPT integration](CHATGPT-INTEGRATION.md).
+
 This private development copy adds an experimental direct ChatGPT/Codex OAuth
 connection. It needs neither an API key nor an installed Codex CLI. It uses a
 browser device-code sign-in, stores credentials in a separate non-syncing macOS
@@ -47,9 +50,10 @@ Model presets do not guarantee entitlement for every account.
 
 ## Limits
 
-The audio request uses `https://chatgpt.com/backend-api/transcribe`, which succeeded
-in a manual test with the user's existing Codex login. The new device-code grant
-still needs an end-to-end test on the user's Mac. This internal endpoint has no
+The audio request uses `https://chatgpt.com/backend-api/transcribe`, which has been reported working
+inside the native test app after device-code sign-in. A live text diagnostic using
+the app login also returned a complete SSE response; account-specific app testing
+is still necessary. This internal endpoint has no
 published compatibility guarantee or confirmed included minutes/pricing for this
 integration. Text uses the Codex Responses route. Usage and access failures are
 reported without switching accounts, providers or billing methods. A 401 is retried

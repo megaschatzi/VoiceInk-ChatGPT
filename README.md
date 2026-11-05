@@ -1,4 +1,4 @@
-> **Private experimental VoiceInk ChatGPT build:** Native ChatGPT sign-in, dictation and text enhancement. Installation, settings transfer and limitations: [CHATGPT-BUILD.md](CHATGPT-BUILD.md). The instructions below describe the original upstream project.
+> **Experimental ChatGPT integration:** Native ChatGPT sign-in for **audio-to-text transcription and optional LLM text enhancement**, without an API key or an installed Codex CLI. Audio and enhancement inputs are sent to OpenAI; this path is not offline. Start with the [English feature and developer overview](CHATGPT-INTEGRATION.md), or see [installation and settings transfer](CHATGPT-BUILD.md). This repository is currently private. The documentation below describes the original upstream project.
 
 <div align="center">
   <img src="VoiceInk/Assets.xcassets/AppIcon.appiconset/256-mac.png" width="180" height="180" />
