@@ -3,7 +3,7 @@
 For an overview of audio transcription, text enhancement and reusable components,
 see [Native ChatGPT integration](CHATGPT-INTEGRATION.md).
 
-This private development copy adds an experimental direct ChatGPT/Codex OAuth
+This development copy adds an experimental direct ChatGPT/Codex OAuth
 connection. It needs neither an API key nor an installed Codex CLI. It uses a
 browser device-code sign-in, stores credentials in a separate non-syncing macOS
 Keychain item, and refreshes tokens when needed. The native OAuth protocol follows

@@ -123,3 +123,22 @@ establish an officially supported OpenAI integration.
 Implementation changes are collected in [pull request #1](https://github.com/megaschatzi/VoiceInk-ChatGPT/pull/1).
 This is a pull request within the development repository, not a pull request
 submitted to Beingpax/VoiceInk. The original project's GPL-3.0 license applies.
+
+## Relationship to upstream and updates
+
+This repository was created as an independent copy because the initial test work
+needed a private repository. It retains the upstream Git history but is not
+currently registered in GitHub's fork network, so GitHub does not show a
+“forked from” label. The original project is explicitly credited above and in the
+README. Making the repository public does not automatically add that label or
+submit the changes to upstream.
+
+Upstream source changes can be fetched from `Beingpax/VoiceInk`, merged into the
+ChatGPT development branch, reviewed for conflicts and validated with the protocol
+tests and macOS build workflow. They are not merged automatically.
+
+The separate test app does not use the original VoiceInk automatic updater. After
+an upstream merge or a change to this integration, a new test build must be
+produced and installed by replacing **VoiceInk ChatGPT.app**. Keeping the same
+ChatGPT app identity preserves its existing settings and local data. The original
+VoiceInk installation continues to use its own update mechanism.
