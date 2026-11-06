@@ -50,6 +50,63 @@ final class ChatGPTClientTests: XCTestCase {
         super.tearDown()
     }
 
+    private func requestBody(_ request: URLRequest) throws -> [String: Any] {
+        if let data = request.httpBody {
+            return try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        }
+        let stream = try XCTUnwrap(request.httpBodyStream)
+        stream.open()
+        defer { stream.close() }
+        var data = Data()
+        var buffer = [UInt8](repeating: 0, count: 4096)
+        while true {
+            let count = stream.read(&buffer, maxLength: buffer.count)
+            if count == 0 { break }
+            guard count > 0 else { throw ChatGPTError.invalidResponse }
+            data.append(contentsOf: buffer.prefix(count))
+        }
+        return try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+    }
+
+    func testSelectedReasoningLevelsReachTheHTTPRequest() async throws {
+        let (client, _) = makeClient()
+        for effort in ChatGPTModelCatalog.supportedEfforts(for: "gpt-6.1-sol") {
+            MockChatGPTHTTP.handler = { request in
+                let body = try self.requestBody(request)
+                XCTAssertEqual((body["reasoning"] as? [String: String])?["effort"], effort.rawValue)
+                XCTAssertEqual(body["model"] as? String, "gpt-6.1-sol")
+                XCTAssertEqual(body["store"] as? Bool, false)
+                return (200, Data(#"data: {"type":"response.completed","response":{"output":[{"type":"message","role":"assistant","content":[{"type":"output_text","text":"OK"}]}]}}"#.utf8))
+            }
+            let text = try await client.enhance(input: [["role": "user", "content": "Test"]],
+                instructions: "Test", model: "gpt-6.1-sol", timeout: 10, reasoningEffort: effort)
+            XCTAssertEqual(text, "OK")
+        }
+    }
+
+    func testExistingCallersStillSendLowReasoning() async throws {
+        let (client, _) = makeClient()
+        MockChatGPTHTTP.handler = { request in
+            let body = try self.requestBody(request)
+            XCTAssertEqual((body["reasoning"] as? [String: String])?["effort"], "low")
+            return (200, Data(#"data: {"type":"response.completed","response":{"output":[{"type":"message","role":"assistant","content":[{"type":"output_text","text":"OK"}]}]}}"#.utf8))
+        }
+        _ = try await client.enhance(input: [], instructions: "Test", model: "gpt-6-luna", timeout: 10)
+    }
+
+    func testUnsupportedReasoningDoesNotSendARequest() async throws {
+        let (client, _) = makeClient()
+        MockChatGPTHTTP.handler = { _ in
+            XCTFail("An unsupported model/effort combination must not be sent")
+            return (500, Data())
+        }
+        do {
+            _ = try await client.enhance(input: [], instructions: "Test", model: "gpt-6.1-sol", timeout: 10,
+                                         reasoningEffort: .none)
+            XCTFail("Expected an unsupported reasoning error")
+        } catch ChatGPTError.unsupportedReasoningEffort {} catch { XCTFail("Unexpected error: \(error)") }
+    }
+
     func testEnhancementDecodesMultipleSSEEvents() async throws {
         let (client, _) = makeClient()
         MockChatGPTHTTP.contentType = "text/event-stream"

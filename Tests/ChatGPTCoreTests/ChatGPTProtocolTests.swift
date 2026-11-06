@@ -3,6 +3,18 @@ import XCTest
 @testable import ChatGPTCore
 
 final class ChatGPTProtocolTests: XCTestCase {
+    func testModelCatalogAndSupportedReasoning() {
+        XCTAssertEqual(Set(ChatGPTModelCatalog.all).count, 8)
+        XCTAssertTrue(ChatGPTModelCatalog.current.contains("gpt-6.1-terra"))
+        XCTAssertTrue(ChatGPTModelCatalog.earlier.contains("gpt-5.6-sol"))
+        XCTAssertFalse(ChatGPTModelCatalog.supportedEfforts(for: "gpt-6.1-sol").contains(.none))
+        XCTAssertFalse(ChatGPTModelCatalog.supportedEfforts(for: "gpt-6-astra").contains(.none))
+        XCTAssertTrue(ChatGPTModelCatalog.supportedEfforts(for: "gpt-6-luna").contains(.none))
+        XCTAssertEqual(ChatGPTModelCatalog.resolvedEffort(.none, for: "gpt-6.1-sol"), .low)
+        XCTAssertEqual(ChatGPTModelCatalog.resolvedEffort(.medium, for: "gpt-6.1-sol"), .medium)
+        XCTAssertEqual(ChatGPTModelCatalog.supportedEfforts(for: "future-model"), [.low, .medium, .high])
+    }
+
     private func jwt(_ claims: [String: Any]) throws -> String {
         let data = try JSONSerialization.data(withJSONObject: claims)
         return "header." + data.base64EncodedString().replacingOccurrences(of: "+", with: "-")

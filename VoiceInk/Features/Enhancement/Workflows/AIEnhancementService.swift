@@ -235,7 +235,9 @@ class AIEnhancementService: ObservableObject {
                 systemPrompt: systemMessage,
                 localUserPrompt: formattedText,
                 timeout: requestTimeout,
-                retryOnTimeout: EnhancementRequestSettings.retryOnTimeout
+                retryOnTimeout: EnhancementRequestSettings.retryOnTimeout,
+                chatGPTReasoningEffort: ChatGPTModelCatalog.resolvedEffort(
+                    configuration.mode?.chatGPTReasoningEffort ?? .low, for: modelName)
             )
             if let openRouterCompletion = completion.openRouterCompletion {
                 let routedProvider = openRouterCompletion.provider ?? "unknown"

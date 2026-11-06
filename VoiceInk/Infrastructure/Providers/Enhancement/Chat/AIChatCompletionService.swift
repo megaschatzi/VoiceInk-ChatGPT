@@ -14,7 +14,8 @@ extension AIService {
         systemPrompt: String? = nil,
         localUserPrompt: String? = nil,
         timeout: TimeInterval = 30,
-        retryOnTimeout: Bool = false
+        retryOnTimeout: Bool = false,
+        chatGPTReasoningEffort: ChatGPTReasoningEffort = .low
     ) async throws -> AIChatCompletionResult {
         let resolvedModel = modelName?.isEmpty == false ? modelName! : selectedModel(for: provider)
 
@@ -26,7 +27,9 @@ extension AIService {
             result = try await ChatGPTClient.shared.enhance(
                 input: messages.filter { $0.role != "system" }.map { ["role": $0.role, "content": $0.content] },
                 instructions: ([systemPrompt ?? ""] + systemMessages).joined(separator: "\n"),
-                model: resolvedModel, timeout: timeout
+                model: resolvedModel,
+                timeout: chatGPTReasoningEffort == .none || chatGPTReasoningEffort == .low ? timeout : max(timeout, 120),
+                reasoningEffort: chatGPTReasoningEffort
             )
         case .gemini:
             result = try await GeminiLLMClient.chatCompletion(

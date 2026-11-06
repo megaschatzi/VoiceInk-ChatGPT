@@ -59,6 +59,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
     var useScreenCapture: Bool
     var selectedAIProvider: String?
     var selectedAIModel: String?
+    var chatGPTReasoningEffort: ChatGPTReasoningEffort = .low
     var outputMode: ModeOutputMode = .paste
     var autoSendKey: FinishAndSendKey = .none
     var customCommand: ModeCustomCommand?
@@ -70,6 +71,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
             selectedPrompt, isRealtimeTranscriptionEnabled, selectedLanguage, isTextFormattingEnabled,
             useClipboardContext, useSelectedTextContext, useScreenCapture, selectedAIProvider, selectedAIModel,
             outputMode, autoSendKey, isAutoSendEnabled, customCommand, isEnabled, isDefault
+        case chatGPTReasoningEffort
         case legacyEmoji = "emoji"
         case selectedWhisperModel
         case selectedTranscriptionModelName
@@ -83,6 +85,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         selectedLanguage: String? = nil, useClipboardContext: Bool = false, useSelectedTextContext: Bool = true,
         useScreenCapture: Bool = false,
         isTextFormattingEnabled: Bool = false, selectedAIProvider: String? = nil, selectedAIModel: String? = nil,
+        chatGPTReasoningEffort: ChatGPTReasoningEffort = .low,
         outputMode: ModeOutputMode = .paste, autoSendKey: FinishAndSendKey = .none,
         customCommand: ModeCustomCommand? = nil,
         isEnabled: Bool = true, isDefault: Bool = false
@@ -104,6 +107,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         self.customCommand = customCommand
         self.selectedAIProvider = selectedAIProvider
         self.selectedAIModel = selectedAIModel
+        self.chatGPTReasoningEffort = chatGPTReasoningEffort
         self.selectedTranscriptionModelName = selectedTranscriptionModelName
         self.isRealtimeTranscriptionEnabled = isRealtimeTranscriptionEnabled
         self.selectedLanguage = selectedLanguage ?? "en"
@@ -162,6 +166,8 @@ struct ModeConfig: Codable, Identifiable, Equatable {
             ?? UserDefaults.standard.bool(forKey: "useScreenCaptureContext")
         selectedAIProvider = try container.decodeIfPresent(String.self, forKey: .selectedAIProvider)
         selectedAIModel = try container.decodeIfPresent(String.self, forKey: .selectedAIModel)
+        chatGPTReasoningEffort = (try container.decodeIfPresent(String.self, forKey: .chatGPTReasoningEffort))
+            .flatMap(ChatGPTReasoningEffort.init(rawValue:)) ?? .low
         outputMode = try container.decodeIfPresent(ModeOutputMode.self, forKey: .outputMode) ?? .paste
         customCommand = try container.decodeIfPresent(ModeCustomCommand.self, forKey: .customCommand)
         // Keep compatibility with saved modes from before Auto Send became global.
@@ -205,6 +211,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         try container.encode(useScreenCapture, forKey: .useScreenCapture)
         try container.encodeIfPresent(selectedAIProvider, forKey: .selectedAIProvider)
         try container.encodeIfPresent(selectedAIModel, forKey: .selectedAIModel)
+        try container.encode(chatGPTReasoningEffort.rawValue, forKey: .chatGPTReasoningEffort)
         try container.encode(outputMode, forKey: .outputMode)
         try container.encode(autoSendKey, forKey: .autoSendKey)
         try container.encodeIfPresent(customCommand, forKey: .customCommand)

@@ -70,6 +70,7 @@ struct ModeConfigFormView: View {
             footer
         }
         .onAppear {
+            normalizeChatGPTReasoning()
             applyVoiceInkRefineRulesIfNeeded()
             applyOutputRules()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -83,9 +84,11 @@ struct ModeConfigFormView: View {
             applyOutputRules()
         }
         .onChange(of: draft.selectedAIProvider) { _, _ in
+            normalizeChatGPTReasoning()
             applyOutputRules()
         }
         .onChange(of: draft.selectedAIModel) { _, _ in
+            normalizeChatGPTReasoning()
             applyOutputRules()
         }
     }
@@ -411,6 +414,7 @@ struct ModeConfigFormView: View {
 
                 if let provider = configuredSelectedAIProvider {
                     aiModelPicker(for: provider)
+                    if provider == .chatGPT { chatGPTOptions }
                     if provider != .voiceInkRefine {
                         promptPicker
                         contextAwarenessRow
@@ -484,6 +488,70 @@ struct ModeConfigFormView: View {
                 }
             }
         }
+    }
+
+    private var chatGPTModel: String {
+        draft.selectedAIModel?.isEmpty == false ? draft.selectedAIModel! : AIProvider.chatGPT.defaultModel
+    }
+
+    private func normalizeChatGPTReasoning() {
+        guard configuredSelectedAIProvider == .chatGPT else { return }
+        draft.chatGPTReasoningEffort = ChatGPTModelCatalog.resolvedEffort(
+            draft.chatGPTReasoningEffort, for: chatGPTModel)
+    }
+
+    private var chatGPTOptions: some View {
+        Group {
+            Picker("Reasoning level", selection: Binding(
+                get: { ChatGPTModelCatalog.resolvedEffort(draft.chatGPTReasoningEffort, for: chatGPTModel) },
+                set: { draft.chatGPTReasoningEffort = $0 }
+            )) {
+                ForEach(ChatGPTModelCatalog.supportedEfforts(for: chatGPTModel), id: \.self) { effort in
+                    Text(effort.displayName).tag(effort)
+                }
+            }
+            Text("Low is the default. Higher levels can take longer and use more allowance; they do not guarantee a better edit. This setting only affects ChatGPT text enhancement.")
+                .font(.caption).foregroundStyle(.secondary)
+            DisclosureGroup("Model and language guidance") {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(chatGPTModelGuidance)
+                    Text(chatGPTLanguageGuidance)
+                    Text("These are starting points, not language benchmarks. Check names, numbers, units and conditions in your own examples. The language picker controls transcription; it does not request translation.")
+                    Text("The model list is curated, not a list of your account permissions. New IDs can be entered with Custom…. Model access depends on your account. Changing the text model does not change the audio model.")
+                    Link("OpenAI model guide", destination: URL(string: "https://learn.chatgpt.com/docs/models")!)
+                }
+                .font(.caption).foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var chatGPTModelGuidance: String {
+        switch chatGPTModel {
+        case "gpt-6-luna":
+            return String(localized: "GPT-6 Luna: start here for short, repeatable cleanup and everyday emails. Try Low first.")
+        case "gpt-6.1-terra":
+            return String(localized: "GPT-6.1 Terra: a candidate for clear, natural writing. Compare it on your business texts; Low is a useful starting point.")
+        case "gpt-6.1-sol", "gpt-6-sol":
+            return String(localized: "Sol: compare it for complex prompts, several conditions or strict formatting. Start with Low and test Medium if needed.")
+        case "gpt-6-astra":
+            return String(localized: "Astra: intended for demanding analysis and complex work. Usually more than is needed for short dictation cleanup.")
+        default:
+            return String(localized: "Earlier or custom model: compare quality, response time and account availability on your own examples. Older does not necessarily mean cheaper.")
+        }
+    }
+
+    private var chatGPTLanguageGuidance: String {
+        let language = (draft.selectedLanguage ?? "auto").lowercased()
+        if language.hasPrefix("de") {
+            return String(localized: "German: compare Luna Low for routine emails and Sol Low for detailed business rules. Check formal greetings, umlauts, decimal commas, measurements and product codes.")
+        }
+        if language.hasPrefix("en") {
+            return String(localized: "English: start with Luna Low for routine edits; compare Sol Low for complex conditions. Keep the dictated spelling variant, dates, currency and level of formality.")
+        }
+        if language.hasPrefix("fr") || language.hasPrefix("es") || language.hasPrefix("it") || language.hasPrefix("pt") {
+            return String(localized: "French, Spanish, Italian or Portuguese: start with Luna Low and compare Sol Low for detailed rules. Check accents, polite address and regional number and date formats.")
+        }
+        return String(localized: "Automatic, mixed or other languages: compare models with representative texts in that language. Preserve the dictated language and check names, script and local number formats. More reasoning does not automatically improve language accuracy.")
     }
 
     private func aiModelOptions(for provider: AIProvider) -> [String] {

@@ -127,7 +127,7 @@ enum AIProvider: String, CaseIterable, Sendable {
                 "claude-haiku-5-5",
             ]
         case .chatGPT:
-            return ["gpt-6-luna", "gpt-6-sol", "gpt-5.6-luna", "gpt-5.6-terra"]
+            return ChatGPTModelCatalog.all
         case .openAI:
             return [
                 "gpt-6-luna",

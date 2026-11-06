@@ -184,7 +184,11 @@ actor ChatGPTClient {
         throw ChatGPTError.rejected(401)
     }
 
-    func enhance(input: [[String: String]], instructions: String, model: String, timeout: TimeInterval) async throws -> String {
+    func enhance(input: [[String: String]], instructions: String, model: String, timeout: TimeInterval,
+                 reasoningEffort: ChatGPTReasoningEffort = .low) async throws -> String {
+        guard ChatGPTModelCatalog.supportedEfforts(for: model).contains(reasoningEffort) else {
+            throw ChatGPTError.unsupportedReasoningEffort
+        }
         let requestGeneration = generation
         let messages: [[String: Any]] = input.map { message in
             let role = message["role"] == "assistant" ? "assistant" : "user"
@@ -193,7 +197,7 @@ actor ChatGPTClient {
         }
         let body = try JSONSerialization.data(withJSONObject: [
             "model": model, "instructions": instructions, "input": messages, "store": false, "stream": true,
-            "reasoning": ["effort": "low"], "tools": [],
+            "reasoning": ["effort": reasoningEffort.rawValue], "tools": [],
         ])
         var credential = try await credentials()
         for attempt in 0...1 {

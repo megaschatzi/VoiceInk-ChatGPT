@@ -22,6 +22,8 @@ jobs:
           persist-credentials: false
       - name: Test ChatGPT protocol
         run: swift test
+      - name: Test mode settings migration and backup round trips
+        run: python3 scripts/test-chatgpt-mode-settings.py
       - name: Typecheck native ChatGPT client
         run: >-
           swiftc -typecheck -swift-version 5

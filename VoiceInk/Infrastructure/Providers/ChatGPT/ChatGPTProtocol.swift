@@ -2,7 +2,7 @@ import Foundation
 
 enum ChatGPTError: Error, LocalizedError {
     case signedOut, keychainUnavailable, invalidResponse, loginExpired, deviceLoginUnavailable
-    case rejected(Int), incompleteResponse, audioTooLarge, unsupportedAudio
+    case rejected(Int), incompleteResponse, audioTooLarge, unsupportedAudio, unsupportedReasoningEffort
     case textResponse(String)
 
     var errorDescription: String? {
@@ -14,6 +14,7 @@ enum ChatGPTError: Error, LocalizedError {
         case .deviceLoginUnavailable: return String(localized: "Device code sign-in is unavailable. Enable device code authentication in your ChatGPT security settings, then try again.")
         case .audioTooLarge: return String(localized: "This experimental ChatGPT connection accepts recordings smaller than 20 MB. Please use a shorter recording.")
         case .unsupportedAudio: return String(localized: "Please choose a WAV, M4A, MP3, MP4, WebM, OGG or FLAC audio file.")
+        case .unsupportedReasoningEffort: return String(localized: "This reasoning level is not supported by the selected model. Choose another level in the mode settings.")
         case .incompleteResponse: return String(localized: "ChatGPT did not finish the response. The incomplete text was not used.")
         case .textResponse(let details):
             return String(format: String(localized: "ChatGPT text request failed. Diagnostic: %@"), details)
@@ -237,5 +238,43 @@ struct ChatGPTResponseAccumulator {
             throw ChatGPTError.incompleteResponse
         }
         return text.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
+
+/// A curated text-model catalog, not an account entitlement list.
+/// Checked against OpenAI's Work/Codex model documentation on 2026-11-06.
+enum ChatGPTReasoningEffort: String, Codable, CaseIterable, Sendable {
+    case none, low, medium, high, xhigh, max
+
+    var displayName: String {
+        switch self {
+        case .none: return String(localized: "None")
+        case .low: return String(localized: "Low")
+        case .medium: return String(localized: "Medium")
+        case .high: return String(localized: "High")
+        case .xhigh: return String(localized: "Extra high")
+        case .max: return String(localized: "Maximum")
+        }
+    }
+}
+
+enum ChatGPTModelCatalog {
+    static let current = ["gpt-6-luna", "gpt-6.1-terra", "gpt-6.1-sol", "gpt-6-sol", "gpt-6-astra"]
+    static let earlier = ["gpt-5.6-luna", "gpt-5.6-terra", "gpt-5.6-sol"]
+    static var all: [String] { current + earlier }
+
+    static func supportedEfforts(for model: String) -> [ChatGPTReasoningEffort] {
+        if model == "gpt-6.1-sol" || model == "gpt-6-astra" {
+            return [.low, .medium, .high, .xhigh, .max]
+        }
+        if all.contains(model) { return ChatGPTReasoningEffort.allCases }
+        // Unknown custom models: expose only the common levels, without claiming
+        // their server-side availability. Preserve explicit server access errors.
+        return [.low, .medium, .high]
+    }
+
+    static func resolvedEffort(_ effort: ChatGPTReasoningEffort, for model: String) -> ChatGPTReasoningEffort {
+        supportedEfforts(for: model).contains(effort) ? effort : .low
     }
 }

@@ -23678,7 +23678,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kein"
+            "value" : "Keine"
           }
         },
         "fr" : {
@@ -23697,6 +23697,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "なし"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
           }
         }
       }
@@ -39154,6 +39160,397 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "語数と比較結果がここに表示されます。"
+          }
+        }
+      }
+    },
+    "Current text models" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktuelle Textmodelle"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current text models"
+          }
+        }
+      }
+    },
+    "Earlier text models" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ältere Textmodelle"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Earlier text models"
+          }
+        }
+      }
+    },
+    "Reasoning level" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Denkstufe"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reasoning level"
+          }
+        }
+      }
+    },
+    "Low" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niedrig"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low"
+          }
+        }
+      }
+    },
+    "Medium" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mittel"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medium"
+          }
+        }
+      }
+    },
+    "High" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoch"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High"
+          }
+        }
+      }
+    },
+    "Extra high" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sehr hoch"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extra high"
+          }
+        }
+      }
+    },
+    "Maximum" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximal"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximum"
+          }
+        }
+      }
+    },
+    "Model and language guidance" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modell- und Sprachhinweise"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model and language guidance"
+          }
+        }
+      }
+    },
+    "OpenAI model guide" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI-Modellübersicht"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI model guide"
+          }
+        }
+      }
+    },
+    "This reasoning level is not supported by the selected model. Choose another level in the mode settings." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Denkstufe wird vom gewählten Modell nicht unterstützt. Wähle eine andere Stufe in den Moduseinstellungen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This reasoning level is not supported by the selected model. Choose another level in the mode settings."
+          }
+        }
+      }
+    },
+    "Low is the default. Higher levels can take longer and use more allowance; they do not guarantee a better edit. This setting only affects ChatGPT text enhancement." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niedrig ist die Vorgabe. Höhere Stufen können länger dauern und mehr Kontingent verbrauchen; bessere Ergebnisse sind nicht garantiert. Die Einstellung gilt nur für die ChatGPT-Textbearbeitung."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low is the default. Higher levels can take longer and use more allowance; they do not guarantee a better edit. This setting only affects ChatGPT text enhancement."
+          }
+        }
+      }
+    },
+    "These are starting points, not language benchmarks. Check names, numbers, units and conditions in your own examples. The language picker controls transcription; it does not request translation." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dies sind Ausgangspunkte, keine Sprach-Benchmarks. Prüfe Namen, Zahlen, Einheiten und Bedingungen an eigenen Beispielen. Die Sprachauswahl steuert die Transkription und fordert keine Übersetzung an."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "These are starting points, not language benchmarks. Check names, numbers, units and conditions in your own examples. The language picker controls transcription; it does not request translation."
+          }
+        }
+      }
+    },
+    "The model list is curated, not a list of your account permissions. New IDs can be entered with Custom…. Model access depends on your account. Changing the text model does not change the audio model." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Modellliste ist gepflegt und zeigt keine Kontoberechtigungen. Neue IDs kannst du unter „Benutzerdefiniert…“ eintragen. Der Zugriff hängt von deinem Konto ab. Die Textmodellwahl ändert das Audiomodell nicht."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The model list is curated, not a list of your account permissions. New IDs can be entered with Custom…. Model access depends on your account. Changing the text model does not change the audio model."
+          }
+        }
+      }
+    },
+    "GPT-6 Luna: start here for short, repeatable cleanup and everyday emails. Try Low first." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPT-6 Luna: Ausgangspunkt für kurze, wiederkehrende Korrekturen und alltägliche E-Mails. Beginne mit Niedrig."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPT-6 Luna: start here for short, repeatable cleanup and everyday emails. Try Low first."
+          }
+        }
+      }
+    },
+    "GPT-6.1 Terra: a candidate for clear, natural writing. Compare it on your business texts; Low is a useful starting point." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPT-6.1 Terra: Kandidat für klare, natürliche Texte. Vergleiche es mit deinen Geschäftstexten; Niedrig ist ein sinnvoller Ausgangspunkt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPT-6.1 Terra: a candidate for clear, natural writing. Compare it on your business texts; Low is a useful starting point."
+          }
+        }
+      }
+    },
+    "Sol: compare it for complex prompts, several conditions or strict formatting. Start with Low and test Medium if needed." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sol: Kandidat bei komplexen Prompts, mehreren Bedingungen oder strikter Formatierung. Beginne mit Niedrig und teste bei Bedarf Mittel."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sol: compare it for complex prompts, several conditions or strict formatting. Start with Low and test Medium if needed."
+          }
+        }
+      }
+    },
+    "Astra: intended for demanding analysis and complex work. Usually more than is needed for short dictation cleanup." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Astra: für anspruchsvolle Analysen und komplexe Aufgaben. Für kurze Diktatkorrekturen meist mehr als nötig."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Astra: intended for demanding analysis and complex work. Usually more than is needed for short dictation cleanup."
+          }
+        }
+      }
+    },
+    "Earlier or custom model: compare quality, response time and account availability on your own examples. Older does not necessarily mean cheaper." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Älteres oder eigenes Modell: Vergleiche Qualität, Antwortzeit und Kontozugriff an eigenen Beispielen. Älter bedeutet nicht unbedingt günstiger."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Earlier or custom model: compare quality, response time and account availability on your own examples. Older does not necessarily mean cheaper."
+          }
+        }
+      }
+    },
+    "German: compare Luna Low for routine emails and Sol Low for detailed business rules. Check formal greetings, umlauts, decimal commas, measurements and product codes." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deutsch: Vergleiche Luna Niedrig für Standard-E-Mails und Sol Niedrig für ausführliche Geschäftsregeln. Prüfe Anreden, Umlaute, Dezimalkommas, Maße und Produktcodes."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "German: compare Luna Low for routine emails and Sol Low for detailed business rules. Check formal greetings, umlauts, decimal commas, measurements and product codes."
+          }
+        }
+      }
+    },
+    "English: start with Luna Low for routine edits; compare Sol Low for complex conditions. Keep the dictated spelling variant, dates, currency and level of formality." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Englisch: Beginne mit Luna Niedrig für Standardkorrekturen; vergleiche Sol Niedrig bei komplexen Bedingungen. Bewahre die diktierte Schreibvariante, Datumsangaben, Währung und Förmlichkeit."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "English: start with Luna Low for routine edits; compare Sol Low for complex conditions. Keep the dictated spelling variant, dates, currency and level of formality."
+          }
+        }
+      }
+    },
+    "French, Spanish, Italian or Portuguese: start with Luna Low and compare Sol Low for detailed rules. Check accents, polite address and regional number and date formats." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Französisch, Spanisch, Italienisch oder Portugiesisch: Beginne mit Luna Niedrig und vergleiche Sol Niedrig bei ausführlichen Regeln. Prüfe Akzente, Höflichkeitsformen sowie regionale Zahlen- und Datumsformate."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "French, Spanish, Italian or Portuguese: start with Luna Low and compare Sol Low for detailed rules. Check accents, polite address and regional number and date formats."
+          }
+        }
+      }
+    },
+    "Automatic, mixed or other languages: compare models with representative texts in that language. Preserve the dictated language and check names, script and local number formats. More reasoning does not automatically improve language accuracy." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatisch, gemischt oder andere Sprachen: Vergleiche Modelle anhand typischer Texte dieser Sprache. Bewahre die diktierte Sprache und prüfe Namen, Schrift und lokale Zahlenformate. Mehr Denkaufwand verbessert die Sprachgenauigkeit nicht automatisch."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatic, mixed or other languages: compare models with representative texts in that language. Preserve the dictated language and check names, script and local number formats. More reasoning does not automatically improve language accuracy."
           }
         }
       }

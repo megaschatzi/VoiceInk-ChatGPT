@@ -51,8 +51,21 @@ struct EnhancementModelPicker: View {
     var body: some View {
         Group {
             Picker(title, selection: selection) {
-                ForEach(models, id: \.self) { model in
-                    Text(model).tag(Option.preset(model))
+                if provider == .chatGPT {
+                    Section("Current text models") {
+                        ForEach(models.filter { !ChatGPTModelCatalog.earlier.contains($0) }, id: \.self) { model in
+                            Text(model).tag(Option.preset(model))
+                        }
+                    }
+                    Section("Earlier text models") {
+                        ForEach(models.filter { ChatGPTModelCatalog.earlier.contains($0) }, id: \.self) { model in
+                            Text(model).tag(Option.preset(model))
+                        }
+                    }
+                } else {
+                    ForEach(models, id: \.self) { model in
+                        Text(model).tag(Option.preset(model))
+                    }
                 }
                 if provider.supportsCustomModelID {
                     Text("Custom…").tag(Option.custom)

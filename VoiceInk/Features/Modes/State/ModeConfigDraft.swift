@@ -19,6 +19,7 @@ struct ModeConfigDraft {
     var useScreenCapture: Bool
     var selectedAIProvider: String?
     var selectedAIModel: String?
+    var chatGPTReasoningEffort: ChatGPTReasoningEffort
     var outputMode: ModeOutputMode
     var autoSendKey: FinishAndSendKey
     var customCommand: String
@@ -50,6 +51,7 @@ struct ModeConfigDraft {
             useScreenCapture = true
             selectedAIProvider = inheritedConfig?.selectedAIProvider
             selectedAIModel = inheritedConfig?.selectedAIModel
+            chatGPTReasoningEffort = inheritedConfig?.chatGPTReasoningEffort ?? .low
             outputMode = .paste
             autoSendKey = .none
             customCommand = inheritedConfig?.customCommand?.command ?? ""
@@ -77,6 +79,7 @@ struct ModeConfigDraft {
             useScreenCapture = latestConfig.useScreenCapture
             selectedAIProvider = latestConfig.selectedAIProvider
             selectedAIModel = latestConfig.selectedAIModel
+            chatGPTReasoningEffort = latestConfig.chatGPTReasoningEffort
             outputMode = latestConfig.outputMode
             autoSendKey = latestConfig.autoSendKey
             customCommand = latestConfig.customCommand?.command ?? ""
@@ -188,6 +191,7 @@ struct ModeConfigDraft {
                 isTextFormattingEnabled: isTextFormattingEnabled,
                 selectedAIProvider: selectedAIProvider,
                 selectedAIModel: selectedAIModel,
+                chatGPTReasoningEffort: chatGPTReasoningEffort,
                 outputMode: outputMode,
                 autoSendKey: savedAutoSendKey,
                 customCommand: savedCustomCommand,
@@ -213,6 +217,7 @@ struct ModeConfigDraft {
             updatedConfig.useScreenCapture = useScreenCapture
             updatedConfig.selectedAIProvider = selectedAIProvider
             updatedConfig.selectedAIModel = selectedAIModel
+            updatedConfig.chatGPTReasoningEffort = chatGPTReasoningEffort
             updatedConfig.outputMode = outputMode
             updatedConfig.autoSendKey = savedAutoSendKey
             updatedConfig.customCommand = savedCustomCommand
