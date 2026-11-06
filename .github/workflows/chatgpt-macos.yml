@@ -4,6 +4,11 @@ on:
   push:
     branches: [feature/chatgpt-native]
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: Publish the verified app ZIP as a public prerelease
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -16,6 +21,9 @@ jobs:
   build:
     runs-on: macos-26
     timeout-minutes: 60
+    outputs:
+      build_number: ${{ steps.package.outputs.build_number }}
+      app_version: ${{ steps.package.outputs.app_version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -46,12 +54,15 @@ jobs:
       - name: Build separate test app
         run: make local LOCAL_CODESIGN_IDENTITY=-
       - name: Verify and package app
+        id: package
         run: |
           set -euo pipefail
           APP="$HOME/Downloads/VoiceInk ChatGPT.app"
           test -d "$APP"
           test "$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$APP/Contents/Info.plist")" = "com.megaschatzi.VoiceInk.ChatGPT"
           codesign --verify --deep --strict "$APP"
+          echo "build_number=$(/usr/libexec/PlistBuddy -c 'Print CFBundleVersion' "$APP/Contents/Info.plist")" >> "$GITHUB_OUTPUT"
+          echo "app_version=$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' "$APP/Contents/Info.plist")" >> "$GITHUB_OUTPUT"
           ditto -c -k --sequesterRsrc --keepParent "$APP" VoiceInk-ChatGPT-macOS.zip
           shasum -a 256 VoiceInk-ChatGPT-macOS.zip > VoiceInk-ChatGPT-macOS.zip.sha256
       - uses: actions/upload-artifact@v4
@@ -62,3 +73,31 @@ jobs:
             VoiceInk-ChatGPT-macOS.zip.sha256
           retention-days: 14
           if-no-files-found: error
+
+  release:
+    if: (github.event_name == 'workflow_dispatch' && inputs.publish_release) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[release]'))
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: VoiceInk-ChatGPT-macOS
+      - name: Publish verified ZIP and checksum
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: v${{ needs.build.outputs.app_version }}-chatgpt-build${{ needs.build.outputs.build_number }}
+          BUILD_NUMBER: ${{ needs.build.outputs.build_number }}
+        run: |
+          set -euo pipefail
+          shasum -a 256 -c VoiceInk-ChatGPT-macOS.zip.sha256
+          gh release create "$RELEASE_TAG" \
+            VoiceInk-ChatGPT-macOS.zip VoiceInk-ChatGPT-macOS.zip.sha256 \
+            --target "$GITHUB_SHA" --prerelease \
+            --title "VoiceInk ChatGPT — build $BUILD_NUMBER" \
+            --notes-file .github/chatgpt-release-notes.md

@@ -17,10 +17,10 @@ Sign in with ChatGPT token-sharing flow, which currently does not support audio.
 
 ## Install a test build
 
-[Download build 226 ZIP](https://raw.githubusercontent.com/megaschatzi/VoiceInk-ChatGPT/downloads/releases/build226/VoiceInk-ChatGPT-macOS.zip) (no GitHub sign-in required).
+[Download build 227 ZIP](https://github.com/megaschatzi/VoiceInk-ChatGPT/releases/download/v2.25-chatgpt-build227/VoiceInk-ChatGPT-macOS.zip) (no GitHub sign-in required).
 
 
-1. Open the [build 226 release page](https://github.com/megaschatzi/VoiceInk-ChatGPT/releases/tag/v2.25-chatgpt-build226)
+1. Open the [build 227 release page](https://github.com/megaschatzi/VoiceInk-ChatGPT/releases/tag/v2.25-chatgpt-build227)
    and follow its **Download VoiceInk-ChatGPT-macOS.zip** link. No GitHub account is required.
 2. Unzip the ZIP and move **VoiceInk ChatGPT.app** into Applications.
 3. The build is ad-hoc signed, not Apple-notarized. macOS may require explicit
@@ -47,7 +47,9 @@ Keep the original app installed until you have verified your imported settings.
    sign-in page. Device code authentication must be enabled for your account.
 3. Use **Test text connection** and **Test audio file…** to verify the new grant.
    Tests send their text/audio to OpenAI and use whatever allowance the account permits.
-4. Choose **Use ChatGPT for dictation** for the global transcription model, or
+4. For text enhancement, choose a model and **Reasoning level** in each mode.
+   Existing modes keep Low; expand **Model and language guidance** for hints.
+5. Choose **Use ChatGPT for dictation** for the global transcription model, or
    select **ChatGPT Dictation** in the relevant mode. For text cleanup, enable
    **AI Enhancement** in that mode and choose **ChatGPT** plus the desired model.
 

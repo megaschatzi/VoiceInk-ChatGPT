@@ -29,20 +29,34 @@ zero additional charges, or an officially supported benefit of every ChatGPT pla
 
 ## Download the test app
 
-[Download the build 226 ZIP](https://raw.githubusercontent.com/megaschatzi/VoiceInk-ChatGPT/downloads/releases/build226/VoiceInk-ChatGPT-macOS.zip)
+[Build 227 release and public ZIP](https://github.com/megaschatzi/VoiceInk-ChatGPT/releases/tag/v2.25-chatgpt-build227)
 
-No GitHub sign-in is required. Unzip the ZIP and move **VoiceInk ChatGPT.app**
-to Applications. This build is ad-hoc signed, not Apple-notarized.
-The ZIP is hosted in the repository's `downloads` branch and linked from the
-[release page](https://github.com/megaschatzi/VoiceInk-ChatGPT/releases/tag/v2.25-chatgpt-build226); it is not an expiring Actions artifact.
+Download `VoiceInk-ChatGPT-macOS.zip` from the release assets. No GitHub sign-in is
+required. Unzip it and replace **VoiceInk ChatGPT.app** in Applications after
+quitting the running app. Settings and data stay with the same app identity.
+The build is ad-hoc signed, not Apple-notarized.
 
-## Choose your own enhancement model
+## Choose a model and reasoning level per mode
 
-In the relevant mode, enable **AI Enhancement**, choose **ChatGPT**, then choose a
-preset or **Custom…** and enter the exact model ID. Examples: `gpt-6-luna`,
-`gpt-6-sol`, or `gpt-6.1-sol`. Availability depends on your account. These IDs
-select the text-editing model; the audio transcription model is chosen separately
-by ChatGPT's dictation backend.
+In the relevant mode, enable **AI Enhancement**, choose **ChatGPT**, then select
+both the text model and **Reasoning level**. Current models and earlier models
+are grouped separately. Custom model IDs remain available. The curated catalog
+contains GPT-6 Luna, GPT-6.1 Terra, GPT-6.1 Sol, GPT-6 Sol, GPT-6 Astra and the
+GPT-5.6 Luna/Terra/Sol models; this is not a live account-entitlement list.
+
+Existing modes retain Low. The setting is saved per mode and carried through
+settings backup export/import. Only supported levels are offered for known
+models; switching to a model that cannot use the chosen level resets it to Low.
+Unknown custom IDs offer Low/Medium/High, subject to server support. Higher levels
+may take longer and use more allowance. Medium and higher requests have a minimum
+120-second timeout. CLI commands keep their own settings.
+
+Expand **Model and language guidance** for selection hints based on the selected
+transcription language. German, English, Romance-language and automatic/other
+language guidance highlights greetings, regional formatting, names, codes and
+units. These hints are starting points, not measured language benchmarks. They
+do not change the output language or request translation. Model access remains
+account-dependent; text-model selection does not change the audio model.
 
 ## What is implemented
 
@@ -116,7 +130,7 @@ header and stream-completion formats observed during that investigation. Those
 checks are not a guarantee that every account, model or future server version
 will work.
 
-The latest application build passed 27 automated protocol/HTTP tests, macOS client
+Build 226 passed 27 automated protocol/HTTP tests, macOS client
 type-checking, a full app build and signature verification. These tests use mocked
 responses and do not require an OpenAI account. The app is ad-hoc signed, not
 Apple-notarized. See [installation and build instructions](CHATGPT-BUILD.md).
